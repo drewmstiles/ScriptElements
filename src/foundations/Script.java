@@ -12,8 +12,6 @@ import drivers.DriverFactory;
 
 public abstract class Script extends Thread
 {
-
-	public static final String TEXT_ATTR = "text";
 	public Script(String b)
 	{
 		driver = DriverFactory.getDriverForBrowswer(b);
@@ -33,7 +31,7 @@ public abstract class Script extends Thread
 		for (WebElement we : webElements) {
 			
 			Element e = new Element();
-			e.setText(we.getAttribute(TEXT_ATTR));
+			e.setText(we.getText());
 			elements.add(e);
 		}
 		
