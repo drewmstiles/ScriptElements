@@ -3,12 +3,18 @@ package components;
 public class Element
 {
 
-	public enum Locator { ID, XPATH};
+	public enum Locator { ID, XPATH, NONE};
 
 	public static final String ID_LOCATOR = "id";
 	
 	public static final String XPATH_LOCATOR = "xpath";
 	
+	public static final String NONE_LOCATOR = "none";
+	
+	public Element()
+	{
+		this(Locator.NONE, null);
+	}
 	public Element(String id) {
 		this(Locator.ID, id);
 	}
@@ -33,6 +39,15 @@ public class Element
 		}
 	}
 	
+	public void setText(String t) {
+		text = t;
+	}
+	
+	public String getText() {
+		return text;
+	}
+	
 	private String location;
 	private Locator locator;
+	private String text;
 }
