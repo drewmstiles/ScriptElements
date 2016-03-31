@@ -1,10 +1,19 @@
 package foundations;
 
-public class Script
+import org.openqa.selenium.WebDriver;
+
+import drivers.DriverFactory;
+
+public abstract class Script extends Thread
 {
 
-	public Script()
+	public Script(String b)
 	{
-		// TODO Auto-generated constructor stub
+		driver = DriverFactory.getDriverForBrowswer(b);
 	}
+	
+	@Override
+	public abstract void run();
+	
+	private WebDriver driver;
 }
