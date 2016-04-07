@@ -6,8 +6,11 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import components.Element;
+import components.Table;
 import drivers.DriverFactory;
 
 public abstract class Script extends Thread
@@ -25,6 +28,29 @@ public abstract class Script extends Thread
 		return driver.findElement(By.xpath(e.getXpath()));
 	}
 	
+	public void waitFor(Element e) {
+		WebDriverWait wait = new WebDriverWait(driver, 60);
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(e.getXpath())));
+	}
+	
+	
+	public void fill(Table t) {
+		WebElement table = find(t);
+		
+		List<WebElement> rows = table.findElements(By.tagName("tr"));
+		for (WebElement row : rows) {
+			
+			List<WebElement> children = row.findElements(By.xpath("*"));
+			
+			Element[] data = new Element[children.size()];
+			for (int i = 0; i < data.length; i++) {
+				data[i] = new Element(children.get(i));
+			}
+			
+			t.addRow(data);
+			
+		}
+	}
 	public void write(String text, Element e) {
 		find(e).sendKeys(text);
 	}
@@ -41,10 +67,7 @@ public abstract class Script extends Thread
 		
 		ArrayList<Element> elements = new ArrayList<Element>();
 		for (WebElement we : webElements) {
-			
-			Element e = new Element(null);
-			e.setText(we.getText());
-			elements.add(e);
+			elements.add(new Element(we));
 		}
 		
 		return elements.toArray(new Element[0]);

@@ -1,5 +1,7 @@
 package components;
 
+import org.openqa.selenium.WebElement;
+
 public class Element
 {
 	
@@ -8,6 +10,11 @@ public class Element
 		this.xpath = xpath;
 	}
 	
+	public Element(WebElement e) {
+		
+		this.physical = e;
+		text = physical.getText();
+	}
 	public String getXpath() {
 		return xpath;
 	}
@@ -22,4 +29,5 @@ public class Element
 	
 	private String xpath;
 	private String text;
+	private WebElement physical;
 }
