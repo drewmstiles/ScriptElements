@@ -2,6 +2,7 @@ package foundations;
 
 import java.util.ArrayList;
 
+
 import java.util.List;
 
 import org.openqa.selenium.support.ui.Select;
@@ -42,17 +43,24 @@ public abstract class Script extends Thread
 		
 		List<WebElement> rows = table.findElements(By.tagName("tr"));
 		for (WebElement row : rows) {
-			
-			List<WebElement> children = row.findElements(By.xpath("*"));
-			
-			Element[] data = new Element[children.size()];
-			for (int i = 0; i < data.length; i++) {
-				data[i] = new Element(children.get(i));
-			}
-			
-			t.addRow(data);
-			
+			t.addRow(getChildren(row));
 		}
+	}
+	
+	public Element[] getChildren(Element e) {
+		return getChildren(find(e));
+	}
+	
+	public Element[] getChildren(WebElement e) {
+		
+		List<WebElement> children = e.findElements(By.xpath("*"));
+		
+		Element[] childElements = new Element[children.size()];
+		for (int i = 0; i < childElements.length; i++) {
+			childElements[i] = new Element(children.get(i));
+		}
+		
+		return childElements;
 	}
 	
 	public void select(String text, DropDown dd) {
@@ -65,7 +73,12 @@ public abstract class Script extends Thread
 	}
 	
 	public void click(Element e) {
-		find(e).click();
+		
+		WebElement physical = find(e);
+		physical.click();
+		
+		WebDriverWait wait = new WebDriverWait(driver, 3);
+		wait.until(ExpectedConditions.stalenessOf(physical));
 	}
 	
 	public Element[] findElementsByXpath(String xpath) {
