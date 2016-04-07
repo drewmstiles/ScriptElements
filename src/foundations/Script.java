@@ -21,6 +21,18 @@ public abstract class Script extends Thread
 		driver.get(url);
 	}
 	
+	private WebElement find(Element e) {
+		return driver.findElement(By.xpath(e.getXpath()));
+	}
+	
+	public void write(String text, Element e) {
+		find(e).sendKeys(text);
+	}
+	
+	public void click(Element e) {
+		find(e).click();
+	}
+	
 	public Element[] findElementsByXpath(String xpath) {
 		return extractElementsFromList(driver.findElements(By.xpath(xpath)));
 	}
@@ -30,7 +42,7 @@ public abstract class Script extends Thread
 		ArrayList<Element> elements = new ArrayList<Element>();
 		for (WebElement we : webElements) {
 			
-			Element e = new Element();
+			Element e = new Element(null);
 			e.setText(we.getText());
 			elements.add(e);
 		}
