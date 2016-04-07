@@ -1,8 +1,10 @@
 package foundations;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,6 +12,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import components.Element;
+import components.DropDown;
 import components.Table;
 import drivers.DriverFactory;
 
@@ -51,6 +54,12 @@ public abstract class Script extends Thread
 			
 		}
 	}
+	
+	public void select(String text, DropDown dd) {
+		Select s = new Select(find(dd));
+		s.selectByVisibleText(text);	
+	}
+	
 	public void write(String text, Element e) {
 		find(e).sendKeys(text);
 	}
