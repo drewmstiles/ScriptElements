@@ -1,12 +1,13 @@
 package foundations;
 
 import java.util.ArrayList;
-
-
 import java.util.List;
+
+import managers.JavascriptManager;
 
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -43,7 +44,11 @@ public abstract class Script extends Thread
 		
 		List<WebElement> rows = table.findElements(By.tagName("tr"));
 		for (WebElement row : rows) {
+			String color = JavascriptManager.getProperty("style.backgroundColor", row, driver);
+			JavascriptManager.scrollTo(row, driver);
+			JavascriptManager.highlight(row, driver);
 			t.addRow(getChildren(row));
+			JavascriptManager.setColor(color, row, driver);
 		}
 	}
 	
@@ -78,7 +83,12 @@ public abstract class Script extends Thread
 		physical.click();
 		
 		WebDriverWait wait = new WebDriverWait(driver, 3);
-		wait.until(ExpectedConditions.stalenessOf(physical));
+		try {
+			wait.until(ExpectedConditions.stalenessOf(physical));
+		}
+		catch (TimeoutException ex) {
+			// risk of staleness period has passed
+		}
 	}
 	
 	public Element[] findElementsByXpath(String xpath) {

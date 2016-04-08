@@ -11,14 +11,12 @@ public class Table extends Element
 		rows = new ArrayList<Element[]>();
 	}
 	
-	public void addRow(Element[] row) {
-		for (int i = 0; i < row.length; i++) {
-			System.out.print(row[i].getText() + "\t");
-		}
-		
-		System.out.println();
-		
+	public void addRow(Element[] row) {		
 		rows.add(row);
+	}
+	
+	public ArrayList<Element[]> getRows() {
+		return rows;
 	}
 	
 	
