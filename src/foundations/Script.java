@@ -43,34 +43,34 @@ public abstract class Script extends Thread
 	}
 	
 	
-	public void fill(Table t) {
-		WebElement table = find(t);
-		
-		List<WebElement> rows = table.findElements(By.tagName("tr"));
-		for (WebElement row : rows) {
-			String color = JavascriptManager.getProperty("style.backgroundColor", row, driver);
-			JavascriptManager.scrollTo(row, driver);
-			JavascriptManager.highlight(row, driver);
-			t.addRow(getChildren(row));
-			JavascriptManager.setColor(color, row, driver);
-		}
-	}
+//	public void fill(Table t) {
+//		WebElement table = find(t);
+//		
+//		List<WebElement> rows = table.findElements(By.tagName("tr"));
+//		for (WebElement row : rows) {
+//			String color = JavascriptManager.getProperty("style.backgroundColor", row, driver);
+//			JavascriptManager.scrollTo(row, driver);
+//			JavascriptManager.highlight(row, driver);
+//			t.addRow(getChildren(row));
+//			JavascriptManager.setColor(color, row, driver);
+//		}
+//	}
+//	
+//	public Element[] getChildren(Element e) {
+//		return getChildren(find(e));
+//	}
 	
-	public Element[] getChildren(Element e) {
-		return getChildren(find(e));
-	}
-	
-	public Element[] getChildren(WebElement e) {
-		
-		List<WebElement> children = e.findElements(By.xpath("*"));
-		
-		Element[] childElements = new Element[children.size()];
-		for (int i = 0; i < childElements.length; i++) {
-			childElements[i] = new Element(children.get(i));
-		}
-		
-		return childElements;
-	}
+//	public Element[] getChildren(WebElement e) {
+//		
+//		List<WebElement> children = e.findElements(By.xpath("*"));
+//		
+//		Element[] childElements = new Element[children.size()];
+//		for (int i = 0; i < childElements.length; i++) {
+//			childElements[i] = new Element(children.get(i));
+//		}
+//		
+//		return childElements;
+//	}
 	
 	public void select(String text, DropDown dd) {
 		Select s = new Select(find(dd));
@@ -95,19 +95,23 @@ public abstract class Script extends Thread
 		}
 	}
 	
-	public Element[] findElementsByXpath(String xpath) {
-		return extractElementsFromList(driver.findElements(By.xpath(xpath)));
-	}
-	
-	private Element[] extractElementsFromList(List<WebElement> webElements) {
-		
-		ArrayList<Element> elements = new ArrayList<Element>();
-		for (WebElement we : webElements) {
-			elements.add(new Element(we));
+	public Element[] findElementsByXpath(String xpath) 
+	{
+		List<WebElement> webElements = driver.findElements(By.xpath(xpath));
+		int numElements = webElements.size(); 
+		Element[] elements = new Element[numElements];
+		for (int i = 0; i < numElements; i++) 
+		{
+			String uniqueXPath = xpath + "[" + (i + 1) + "]"; // xpath indexing starts at 1
+			Element e = new Element(uniqueXPath);
+			WebElement we = webElements.get(i);
+			e.setText(we.getText());
+			elements[i] = e;
 		}
 		
-		return elements.toArray(new Element[0]);
+		return elements;
 	}
+	
 	
 	public void end() {
 		driver.close();

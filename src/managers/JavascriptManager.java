@@ -119,7 +119,7 @@ public class JavascriptManager
 		}
 		else
 		{
-			return ((Long)obj).intValue();
+			return ((Double)obj).intValue();
 		}
 	}
 	
