@@ -1,6 +1,5 @@
 package foundations;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import managers.JavascriptManager;
@@ -15,7 +14,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import components.Element;
 import components.DropDown;
-import components.Table;
 import drivers.DriverFactory;
 
 public abstract class Script extends Thread
