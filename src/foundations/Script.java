@@ -25,6 +25,10 @@ public abstract class Script extends Thread
 		driver = DriverFactory.getDriverForBrowswer(b);
 	}
 	
+	public void scrollTo(Element e) {
+		JavascriptManager.scrollTo(find(e), driver);
+	}
+	
 	public void goTo(String url) {
 		driver.get(url);
 	}
