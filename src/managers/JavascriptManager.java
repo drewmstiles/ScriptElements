@@ -111,15 +111,25 @@ public class JavascriptManager
 	
 	private static int getScrollTop(WebElement elem, JavascriptExecutor js)
 	{
-		String s = "return arguments[0].getBoundingClientRect().top;";
-		Object obj = js.executeScript(s, elem);
+		Object obj = js.executeScript("return arguments[0].getBoundingClientRect().top;", elem);
 		if (obj == null)
 		{
 			return 0;
 		}
 		else
 		{
-			return ((Double)obj).intValue();
+			if (obj instanceof Long) 
+			{
+				return ((Long)obj).intValue();
+			}
+			else if (obj instanceof Double)
+			{
+				return ((Double)obj).intValue();
+			}
+			else
+			{
+				throw new RuntimeException();
+			}
 		}
 	}
 	

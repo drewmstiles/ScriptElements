@@ -1,5 +1,7 @@
 package foundations;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import managers.JavascriptManager;
@@ -14,10 +16,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import components.Element;
 import components.DropDown;
+import components.Table;
 import drivers.DriverFactory;
 
 public abstract class Script extends Thread
 {
+	public static final String TABLE_ROW_XPATH = ".//tr";
+	
 	public Script(String b)
 	{
 		driver = DriverFactory.getDriverForBrowswer(b);
@@ -40,44 +45,57 @@ public abstract class Script extends Thread
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(e.getXpath())));
 	}
 	
+	public Table findTable(String tableXPath) 
+	{	
+		Table t = new Table(tableXPath);
+		appendToTable(t);
+		return t;
+		
+	}
+
 	
-//	public void fill(Table t) {
-//		WebElement table = find(t);
-//		
-//		List<WebElement> rows = table.findElements(By.tagName("tr"));
-//		for (WebElement row : rows) {
-//			String color = JavascriptManager.getProperty("style.backgroundColor", row, driver);
-//			JavascriptManager.scrollTo(row, driver);
-//			JavascriptManager.highlight(row, driver);
-//			t.addRow(getChildren(row));
-//			JavascriptManager.setColor(color, row, driver);
-//		}
-//	}
-//	
-//	public Element[] getChildren(Element e) {
-//		return getChildren(find(e));
-//	}
+	public void appendToTable(Table t) 
+	{
+		WebElement table = find(t);
+		List<WebElement> rows = table.findElements(By.xpath(TABLE_ROW_XPATH));
+		System.out.println(rows.size());
+		for (int i = 0; i < rows.size(); i++) 
+		{	
+			ArrayList<Element> row = new ArrayList<Element>();
+			// get physical row
+			WebElement r = rows.get(i);
+			// animating row scroll
+			String color = JavascriptManager.getProperty("style.backgroundColor", r, driver);
+			JavascriptManager.scrollTo(r, driver);
+			JavascriptManager.highlight(r, driver);
+			// adding row of cells
+			String rowXPath = t.getXpath() + "//tr[" + (i + 1) + "]";
+			row.addAll(Arrays.asList(findElementsByXPath(rowXPath + "//th")));
+			row.addAll(Arrays.asList(findElementsByXPath(rowXPath + "//td")));
+			if (row.size() == 0)
+			{
+				// empty row
+			}
+			else 
+			{
+				t.addRow(row.toArray(new Element[0]));
+			}
+			// animation cleanup
+			JavascriptManager.setColor(color, r, driver);
+		}
+	}
 	
-//	public Element[] getChildren(WebElement e) {
-//		
-//		List<WebElement> children = e.findElements(By.xpath("*"));
-//		
-//		Element[] childElements = new Element[children.size()];
-//		for (int i = 0; i < childElements.length; i++) {
-//			childElements[i] = new Element(children.get(i));
-//		}
-//		
-//		return childElements;
-//	}
 	
 	public void select(String text, DropDown dd) {
 		Select s = new Select(find(dd));
 		s.selectByVisibleText(text);	
 	}
+
 	
 	public void write(String text, Element e) {
 		find(e).sendKeys(text);
 	}
+	
 	
 	public void click(Element e) {
 		
@@ -93,7 +111,7 @@ public abstract class Script extends Thread
 		}
 	}
 	
-	public Element[] findElementsByXpath(String xpath) 
+	public Element[] findElementsByXPath(String xpath) 
 	{
 		List<WebElement> webElements = driver.findElements(By.xpath(xpath));
 		int numElements = webElements.size(); 
