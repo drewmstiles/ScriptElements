@@ -172,6 +172,16 @@ public abstract class Script extends Thread
 		}
 	}
 	
+	public void switchToFrame(Element frame) 
+	{
+		driver.switchTo().frame(find(frame));
+	}
+	
+	public void switchToDefaultFrame()
+	{
+		driver.switchTo().defaultContent();
+	}
+	
 	public Element[] findElementsByXPath(String xpath) 
 	{
 		List<WebElement> webElements = driver.findElements(By.xpath(xpath));
