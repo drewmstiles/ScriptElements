@@ -45,22 +45,17 @@ public abstract class Script extends Thread
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(e.getXpath())));
 	}
 	
-	public Table findTable(String tableXPath) 
-	{	
-		Table t = new Table(tableXPath);
-		appendToTable(t);
-		return t;
-		
-	}
-
-	
-	public void appendToTable(Table t) 
+	public String[][] read(Table t) 
 	{
+		// initialize
+		ArrayList<String[]> data = new ArrayList<String[]>();
+		
+		// build
 		WebElement table = find(t);
 		List<WebElement> rows = table.findElements(By.xpath(TABLE_ROW_XPATH));
-		System.out.println(rows.size());
 		for (int i = 0; i < rows.size(); i++) 
 		{	
+			ArrayList<String> rowData = new ArrayList<String>();
 			ArrayList<Element> row = new ArrayList<Element>();
 			// get physical row
 			WebElement r = rows.get(i);
@@ -78,11 +73,69 @@ public abstract class Script extends Thread
 			}
 			else 
 			{
-				t.addRow(row.toArray(new Element[0]));
+				// read text from table cell
+				for (int j = 0; j < row.size(); j++) {
+					rowData.add(row.get(j).getText());
+				}
+				data.add(rowData.toArray(new String[0]));
 			}
 			// animation cleanup
 			JavascriptManager.setColor(color, r, driver);
 		}
+		
+		return data.toArray(new String[0][0]);
+		// return
+	}
+	
+	public Table findTable(String tableXPath) 
+	{	
+		Table t = new Table(tableXPath);
+		appendToTable(t);
+		return t;
+		
+	}
+
+	
+	public String[][] appendToTable(Table t) 
+	{
+		// initialize
+		ArrayList<String[]> data = new ArrayList<String[]>();
+		
+		// build
+		WebElement table = find(t);
+		List<WebElement> rows = table.findElements(By.xpath(TABLE_ROW_XPATH));
+		for (int i = 0; i < rows.size(); i++) 
+		{	
+			ArrayList<String> rowData = new ArrayList<String>();
+			ArrayList<Element> row = new ArrayList<Element>();
+			// get physical row
+			WebElement r = rows.get(i);
+			// animating row scroll
+			String color = JavascriptManager.getProperty("style.backgroundColor", r, driver);
+			JavascriptManager.scrollTo(r, driver);
+			JavascriptManager.highlight(r, driver);
+			// adding row of cells
+			String rowXPath = t.getXpath() + "//tr[" + (i + 1) + "]";
+			row.addAll(Arrays.asList(findElementsByXPath(rowXPath + "//th")));
+			row.addAll(Arrays.asList(findElementsByXPath(rowXPath + "//td")));
+			if (row.size() == 0)
+			{
+				// empty row
+			}
+			else 
+			{
+				// read text from table cell
+				for (int j = 0; j < row.size(); j++) {
+					rowData.add(row.get(j).getText());
+				}
+				data.add(rowData.toArray(new String[0]));
+			}
+			// animation cleanup
+			JavascriptManager.setColor(color, r, driver);
+		}
+		
+		return data.toArray(new String[0][0]);
+		// return
 	}
 	
 	
