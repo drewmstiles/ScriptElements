@@ -8,6 +8,7 @@ import managers.JavascriptManager;
 
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -153,7 +154,14 @@ public abstract class Script extends Thread
 	public void click(Element e) {
 		
 		WebElement physical = find(e);
-		physical.click();
+		try 
+		{
+			physical.click();
+		}
+		catch (ElementNotVisibleException ex) 
+		{
+			JavascriptManager.forceClick(physical, driver);
+		}
 		
 		WebDriverWait wait = new WebDriverWait(driver, 3);
 		try {
