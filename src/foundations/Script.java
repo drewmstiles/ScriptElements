@@ -96,7 +96,7 @@ public abstract class Script extends Thread
 		
 		// build
 		WebElement table = find(t);
-		List<WebElement> rows = table.findElements(By.xpath(TABLE_ROW_XPATH));
+		List<WebElement> rows = table.findElements(By.xpath(".//tr"));
 		for (int i = 0; i < rows.size(); i++) 
 		{	
 			ArrayList<String> rowData = new ArrayList<String>();
@@ -194,9 +194,7 @@ public abstract class Script extends Thread
 	
 	
 	@Override
-	public abstract void run();
-	
-	private static final String TABLE_ROW_XPATH = ".//tr";
+	public abstract void run(); 
 	
 	private WebDriver driver;
 }
