@@ -1,6 +1,5 @@
 package foundations;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -109,8 +108,7 @@ public abstract class Script extends Thread
 			JavascriptManager.highlight(r, driver);
 			// adding row of cells
 			String rowXPath = t.getXpath() + "//tr[" + (i + 1) + "]";
-			row.addAll(find(rowXPath + "//th"));
-			row.addAll(find(rowXPath + "//td"));
+			row.addAll(find(rowXPath + "//th" + "|" + rowXPath + "//td"));
 			if (row.size() == 0)
 			{
 				// empty row
