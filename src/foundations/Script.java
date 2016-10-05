@@ -129,10 +129,8 @@ public abstract class Script extends Thread
 		// return
 	}
 	
-	public String getValue(Element e) {
-		String v = find(e).getAttribute("value");
-		System.out.println(v);
-		return v;
+	public String getAttr(String a, Element e) {
+		return find(e).getAttribute(a);
 	}
 	
 	public void write(String text, Element e) 
@@ -140,6 +138,9 @@ public abstract class Script extends Thread
 		find(e).sendKeys(text);
 	}
 	
+	public void clear(Element e) {
+		find(e).clear();
+	}
 	
 	/*
 	 * Interaction Methods
