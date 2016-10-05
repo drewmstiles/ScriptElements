@@ -129,6 +129,11 @@ public abstract class Script extends Thread
 		// return
 	}
 	
+	public String getValue(Element e) {
+		String v = find(e).getAttribute("value");
+		System.out.println(v);
+		return v;
+	}
 	
 	public void write(String text, Element e) 
 	{

@@ -139,6 +139,7 @@ public class JavascriptManager
 		return ((String)js.executeScript(script, elem)).equals("visible");
 	}
 	
+	// TODO does this work still?
 	public static String getProperty(String property, WebElement element, WebDriver driver) {
 		JavascriptExecutor js = (JavascriptExecutor)driver;
 		String script = "return window.getComputedStyle(arguments[0]).getPropertyValue('" + property + "')";
