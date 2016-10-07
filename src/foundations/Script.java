@@ -9,6 +9,7 @@ import managers.JavascriptManager;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -22,6 +23,9 @@ import drivers.DriverFactory;
 
 public abstract class Script extends Thread
 {
+	public static final int ONE_SEC = 1000; // ms
+	public static final int ALERT_WAIT_DURATION = 50; // ms
+	
 	/*
 	 * Constructor
 	 */
@@ -45,6 +49,10 @@ public abstract class Script extends Thread
 	/*
 	 * Navigation Methods
 	 */
+	
+	public void refresh() {
+		driver.navigate().refresh();
+	}
 	
 	public void goTo(String url) 
 	{
@@ -158,14 +166,6 @@ public abstract class Script extends Thread
 		{
 			JavascriptManager.forceClick(physical, driver);
 		}
-		
-		WebDriverWait wait = new WebDriverWait(driver, 3);
-		try {
-			wait.until(ExpectedConditions.stalenessOf(physical));
-		}
-		catch (TimeoutException ex) {
-			// risk of staleness period has passed
-		}
 	}
 	
 	
@@ -186,7 +186,32 @@ public abstract class Script extends Thread
 	{
 		driver.switchTo().defaultContent();
 	}
+
+	public boolean alertHandler() {
+		
+		return handleAlert(driver);
+	}
 	
+	private static boolean handleAlert(WebDriver driver) {
+	
+		boolean alertAccepted;
+		
+//		WebDriverWait wait = new WebDriverWait(driver, ALERT_WAIT_DURATION);
+		try {
+//			wait.until(ExpectedConditions.alertIsPresent());
+			Thread.sleep(ALERT_WAIT_DURATION);
+			driver.switchTo().alert().accept();
+			alertAccepted = true;
+		}
+		catch (NoAlertPresentException ex) {
+			alertAccepted = false;
+		} catch (InterruptedException ex) {
+			ex.printStackTrace();
+			alertAccepted = false;
+		}	
+		
+		return alertAccepted;
+	}
 	
 	/*
 	 * Exit Methods
