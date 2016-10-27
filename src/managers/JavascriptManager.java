@@ -1,6 +1,5 @@
 package managers;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -35,27 +34,13 @@ public class JavascriptManager
 		js.executeScript("javascript:window.scrollTo(0," + y + ")");
 	}
 	
-	public static void highlight(WebElement element, WebDriver driver) {
-		setColor(YELLOW, element, driver);
-	}
-
-	public static void setColor(String color, String id, WebDriver driver)
-	{
-		WebElement element = driver.findElement(By.id(id));
-		setColor(color, element, driver);
+	public static void setColor(WebElement element, String color, WebDriver driver) {
+		setStyle("background", color, element, driver);
 	}
 	
-	// TODO deprecate
-	public static void setColor(String color, WebElement element, WebDriver driver)
-	{
+	public static void setStyle(String style, String value, WebElement element, WebDriver driver) {
 		JavascriptExecutor js = (JavascriptExecutor)driver;
-		js.executeScript("arguments[0].style.background='" + color + "'", element);
-	}
-	
-	public static void setColor(WebDriver driver, WebElement element, String color)
-	{
-		JavascriptExecutor js = (JavascriptExecutor)driver;
-		js.executeScript("arguments[0].style.background='" + color + "'", element);
+		js.executeScript("arguments[0].style." + style + "='" + value + "'", element);
 	}
 	
 	public static void scrollTo(WebElement element, WebDriver driver)
@@ -174,7 +159,11 @@ public class JavascriptManager
 		}
 	}
 	
-	
+	public static String getStyle(String style, WebElement element, WebDriver driver) {
+		JavascriptExecutor js = (JavascriptExecutor)driver;
+		String script = "return arguments[0].style." + style;
+		return (String)js.executeScript(script, element);
+	}
 	public static void hide(WebDriver driver, WebElement element) {
 		JavascriptExecutor js = (JavascriptExecutor)driver;
 		String hideScript = "arguments[0].style.display = 'none'";

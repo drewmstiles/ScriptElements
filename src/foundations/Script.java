@@ -97,6 +97,9 @@ public abstract class Script extends Thread
 		return Arrays.asList(elements);
 	}
 	
+	public int getElementCount(String xpath) {
+		return driver.findElements(By.xpath(xpath)).size();
+	}
 	
 	public void waitFor(Element e) {
 		WebDriverWait wait = new WebDriverWait(driver, 60);
@@ -125,7 +128,7 @@ public abstract class Script extends Thread
 			// animating row scroll
 			String color = JavascriptManager.getProperty("style.backgroundColor", r, driver);
 			JavascriptManager.scrollTo(r, driver);
-			JavascriptManager.highlight(r, driver);
+			JavascriptManager.setColor(r, "yellow", driver);
 			// adding row of cells
 			String rowXPath = t.getXpath() + "//tr[" + (i + 1) + "]";
 			row.addAll(find(rowXPath + "//th" + "|" + rowXPath + "//td"));
@@ -142,7 +145,7 @@ public abstract class Script extends Thread
 				data.add(rowData.toArray(new String[0]));
 			}
 			// animation cleanup
-			JavascriptManager.setColor(color, r, driver);
+			JavascriptManager.setColor(r, color, driver);
 		}
 		
 		return data.toArray(new String[0][0]);
@@ -151,6 +154,10 @@ public abstract class Script extends Thread
 	
 	public String getAttr(String a, Element e) {
 		return find(e).getAttribute(a);
+	}
+	
+	public String getStyle(String s, Element e) {
+		return JavascriptManager.getStyle(s, find(e), driver);
 	}
 	
 	public void write(String text, Element e) 
@@ -221,6 +228,10 @@ public abstract class Script extends Thread
 		}	
 		
 		return alertAccepted;
+	}
+	
+	public void setStyle(String style, String value, Element e) {
+		JavascriptManager.setStyle(style, value, find(e), driver);
 	}
 	
 	/*
