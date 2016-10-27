@@ -24,7 +24,7 @@ import drivers.DriverFactory;
 public abstract class Script extends Thread
 {
 	public static final int ONE_SEC = 1000; // ms
-	public static final int ALERT_WAIT_DURATION = 50; // ms
+	public static final int ALERT_WAIT_DURATION = 250; // ms
 	
 	/*
 	 * Constructor
@@ -196,9 +196,7 @@ public abstract class Script extends Thread
 	
 		boolean alertAccepted;
 		
-//		WebDriverWait wait = new WebDriverWait(driver, ALERT_WAIT_DURATION);
 		try {
-//			wait.until(ExpectedConditions.alertIsPresent());
 			Thread.sleep(ALERT_WAIT_DURATION);
 			driver.switchTo().alert().accept();
 			alertAccepted = true;

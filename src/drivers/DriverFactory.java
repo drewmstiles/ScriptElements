@@ -5,13 +5,15 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 public class DriverFactory
 {
-	public static final String WEB_DRIVER_CHROME = "webdriver.chrome.driver";
+	public static final String CHROME = "chrome";
+	
+	private static final String WEB_DRIVER_CHROME = "webdriver.chrome.driver";
 
-	public static final String DRIVERS_DIR = "drivers/";
+	private static final String DRIVERS_DIR = "/Users/dms/Developer/Java/ScriptElements/drivers/";
 	
-	public static final String CHROME_DRIVER_FILE = "chromedriver";
+	private static final String CHROME_DRIVER_FILE = "chromedriver";
 	
-	public static final String EXE_EXTENSION = ".exe";
+	private static final String EXE_EXTENSION = ".exe";
 	
 	public static WebDriver getDriverForBrowswer(String b)	{
 		
