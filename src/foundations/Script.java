@@ -59,6 +59,18 @@ public abstract class Script extends Thread
 		driver.get(url);
 	}
 	
+	public void waitForPageToLoad() {
+		JavascriptManager.waitForPageToLoad(driver);
+	}
+	
+	public void wait(int ms) {
+		try {
+			Thread.sleep(ms);
+		} 
+		catch (InterruptedException ex) {
+			ex.printStackTrace();
+		}
+	}
 	
 	/*
 	 * Location Methods

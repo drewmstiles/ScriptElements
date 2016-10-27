@@ -182,7 +182,7 @@ public class JavascriptManager
 	}
 	
 	
-	public static void waitForDocumentLoad(WebDriver driver)
+	public static void waitForPageToLoad(WebDriver driver)
 	{
 		JavascriptExecutor js = (JavascriptExecutor)driver;
 		
