@@ -17,6 +17,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import components.Element;
+import components.ElementFactory;
 import components.DropDown;
 import components.Table;
 import drivers.DriverFactory;
@@ -33,6 +34,7 @@ public abstract class Script extends Thread
 	public Script(String b)
 	{
 		driver = DriverFactory.getDriverForBrowswer(b);
+		elementFactory = new ElementFactory(driver);
 	}
 	
 	
@@ -109,6 +111,32 @@ public abstract class Script extends Thread
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(e.getXpath())));
 	}
 
+	public Element get(String element, String xpath) {
+		if (element.equals(ELEMENT)) {
+			return new Element(xpath, driver);
+		}
+		else if (element.equals(TABLE)) {
+			return new Table(xpath, driver);
+		}
+		else if (element.equals(DROP_DOWN)) {
+			return new DropDown(xpath, driver);
+		}
+		else {
+			throw new RuntimeException("Attempted instantiation unkown element type.");
+		}
+	}
+	
+	public Element get(String element, WebElement e) {
+		if (element.equals(ELEMENT)) {
+			return new Element(e, driver);
+		}
+		else if (element.equals(TABLE)) {
+			return new Table(e, driver);
+		}
+		else {
+			throw new RuntimeException("Attempted instantiation unkown element type.");
+		}
+	}
 	
 	/*
 	 * Access Methods
@@ -209,4 +237,5 @@ public abstract class Script extends Thread
 	public abstract void run(); 
 	
 	private WebDriver driver;
+	private ElementFactory elementFactory;
 }

@@ -1,6 +1,7 @@
 package components;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,62 +17,64 @@ public class Table extends Element implements Iterable<Element[]>
 	public Table(String xpath, WebDriver driver)
 	{
 		super(xpath, driver);
-		rows = new ArrayList<Element[]>();
+		_rows = initializeRows();
 	}
 	
-	public void addRow(Element[] row) {		
-		rows.add(row);
+	public Table (WebElement e, WebDriver driver) {
+		super(e, driver);
+		_rows = initializeRows();	
 	}
 	
-	public ArrayList<Element[]> getRows() {
-		return rows;
+	public Element[] getRow(int r) {
+		return _rows[r];
 	}
 
 	@Override
 	public Iterator<Element[]> iterator() {
-		return rows.iterator();
+		return Arrays.asList(_rows).iterator();
 	}
 	
-	public String[][] initialize(Table t) 
-	{
-		// initialize
-		ArrayList<String[]> data = new ArrayList<String[]>();
+	private Element[][] initializeRows() {
 		
-		// build
-		WebElement table = driver.findElement(By.xpath(this.getXpath()));
-		List<WebElement> rows = table.findElements(By.xpath(".//tr"));
-		for (int i = 0; i < rows.size(); i++) 
-		{	
-			ArrayList<String> rowData = new ArrayList<String>();
-			ArrayList<Element> row = new ArrayList<Element>();
-			// get physical row
-			WebElement r = rows.get(i);
-			// animating row scroll
-			String color = JavascriptManager.getProperty("style.backgroundColor", r, driver);
-			JavascriptManager.scrollTo(r, driver);
-			JavascriptManager.setColor(r, "yellow", driver);
-			// adding row of cells
-			String rowXPath = t.getXpath() + "//tr[" + (i + 1) + "]";
-			row.addAll(find(rowXPath + "//th" + "|" + rowXPath + "//td"));
-			if (row.size() == 0)
-			{
+		ArrayList<Element[]> logRows = new ArrayList<Element[]>();
+		
+		WebElement physTable= driver.findElement(By.xpath(getXpath()));
+		List<WebElement> physRows = physTable.findElements(By.xpath(".//tr"));
+		
+		for (int i = 0; i < physRows.size(); i++) {	
+			
+			// Get physical row.
+			WebElement physRow = physRows.get(i);
+			
+			// Animating row scroll.
+			String color = JavascriptManager.getProperty("style.backgroundColor", physRow, driver);
+			JavascriptManager.scrollTo(physRow, driver);
+			JavascriptManager.setColor(physRow, "yellow", driver);
+			
+			// Adding row of cells.
+			String rowXPath = getXpath() + "//tr[" + (i + 1) + "]";
+			List<WebElement> physCells = driver.findElements(By.xpath(rowXPath + "//th" + "|" + rowXPath + "//td"));
+			if (physCells.size() == 0) {
 				// empty row
 			}
-			else 
-			{
-				// read text from table cell
-				for (int j = 0; j < row.size(); j++) {
-					rowData.add(row.get(j).getText());
-				}
-				data.add(rowData.toArray(new String[0]));
+			else  {
+				logRows.add(parseElements(physCells));
 			}
+			
 			// animation cleanup
-			JavascriptManager.setColor(r, color, driver);
+			JavascriptManager.setColor(physRow, color, driver);
 		}
 		
-		return data.toArray(new String[0][0]);
-		// return
+		return logRows.toArray(new Element[0][0]);
 	}
-
-	private ArrayList<Element[]> rows;
+	
+	private Element[] parseElements(List<WebElement> physCells) {
+		Element[] logCells = new Element[physCells.size()];
+		for (int j = 0; j < physCells.size(); j++) {
+			logCells[j] = ElementFactory.get("element", physCells.get(j), driver);
+		}
+		return logCells;
+	}
+	
+	private Element[][] _rows;
 }
