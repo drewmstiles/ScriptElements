@@ -1,8 +1,9 @@
 package components;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
-public class Table extends Element
+public class Table extends Element implements Iterable<Element[]>
 {
 
 	public Table(String xpath)
@@ -18,8 +19,11 @@ public class Table extends Element
 	public ArrayList<Element[]> getRows() {
 		return rows;
 	}
-	
-	
-	private ArrayList<Element[]> rows;
 
+	@Override
+	public Iterator<Element[]> iterator() {
+		return rows.iterator();
+	}
+
+	private ArrayList<Element[]> rows;
 }
