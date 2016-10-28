@@ -1,6 +1,5 @@
 package foundations;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoAlertPresentException;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -34,7 +32,6 @@ public abstract class Script extends Thread
 	public Script(String b)
 	{
 		driver = DriverFactory.getDriverForBrowswer(b);
-		elementFactory = new ElementFactory(driver);
 	}
 	
 	
@@ -79,11 +76,11 @@ public abstract class Script extends Thread
 	 */
 	
 	private WebElement find(Element e) {
-		return driver.findElement(By.xpath(e.getXpath()));
+		return driver.findElement(By.xpath(e.getXPath()));
 	}
 	
-	public void getTable(String xpath) {
-		Table t = new Table(xpath, driver);
+	public Table getTable(String xpath) {
+		return (Table)ElementFactory.get("table", xpath, driver);
 	}
 	
 	public List<Element> find(String xpath) 
@@ -94,9 +91,9 @@ public abstract class Script extends Thread
 		for (int i = 0; i < numElements; i++) 
 		{
 			String uniqueXPath = xpath + "[" + (i + 1) + "]"; // xpath indexing starts at 1
-			Element e = new Element(uniqueXPath);
+			Element e = ElementFactory.get("element", uniqueXPath, driver);
 			WebElement we = webElements.get(i);
-			e.setText(we.getText());
+			e.write(we.getText());
 			elements[i] = e;
 		}
 		return Arrays.asList(elements);
@@ -108,35 +105,9 @@ public abstract class Script extends Thread
 	
 	public void waitFor(Element e) {
 		WebDriverWait wait = new WebDriverWait(driver, 60);
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(e.getXpath())));
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(e.getXPath())));
 	}
 
-	public Element get(String element, String xpath) {
-		if (element.equals(ELEMENT)) {
-			return new Element(xpath, driver);
-		}
-		else if (element.equals(TABLE)) {
-			return new Table(xpath, driver);
-		}
-		else if (element.equals(DROP_DOWN)) {
-			return new DropDown(xpath, driver);
-		}
-		else {
-			throw new RuntimeException("Attempted instantiation unkown element type.");
-		}
-	}
-	
-	public Element get(String element, WebElement e) {
-		if (element.equals(ELEMENT)) {
-			return new Element(e, driver);
-		}
-		else if (element.equals(TABLE)) {
-			return new Table(e, driver);
-		}
-		else {
-			throw new RuntimeException("Attempted instantiation unkown element type.");
-		}
-	}
 	
 	/*
 	 * Access Methods
@@ -237,5 +208,4 @@ public abstract class Script extends Thread
 	public abstract void run(); 
 	
 	private WebDriver driver;
-	private ElementFactory elementFactory;
 }

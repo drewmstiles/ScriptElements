@@ -1,5 +1,6 @@
 package components;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -13,21 +14,23 @@ public class Element
 		this.physical = e;
 	}
 	
-	public String getXpath() {
+	public String getXPath() {
 		return xpath;
 	}
 	
-	public void setText(String t) {
-		text = t;
+	public void write(String text) {
+		find().sendKeys(text);
 	}
 	
 	public String getText() {
-		return text;
+		return find().getText();
+	}
+	
+	private WebElement find() {
+		return driver.findElement(By.xpath(getXPath()));
 	}
 	
 	protected String xpath;
 	protected WebElement physical;
 	protected WebDriver driver;
-	
-	private String text;
 }

@@ -38,7 +38,7 @@ public class Table extends Element implements Iterable<Element[]>
 		
 		ArrayList<Element[]> logRows = new ArrayList<Element[]>();
 		
-		WebElement physTable= driver.findElement(By.xpath(getXpath()));
+		WebElement physTable= driver.findElement(By.xpath(getXPath()));
 		List<WebElement> physRows = physTable.findElements(By.xpath(".//tr"));
 		
 		for (int i = 0; i < physRows.size(); i++) {	
@@ -52,7 +52,7 @@ public class Table extends Element implements Iterable<Element[]>
 			JavascriptManager.setColor(physRow, "yellow", driver);
 			
 			// Adding row of cells.
-			String rowXPath = getXpath() + "//tr[" + (i + 1) + "]";
+			String rowXPath = getXPath() + "//tr[" + (i + 1) + "]";
 			List<WebElement> physCells = driver.findElements(By.xpath(rowXPath + "//th" + "|" + rowXPath + "//td"));
 			if (physCells.size() == 0) {
 				// empty row
