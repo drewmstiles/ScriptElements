@@ -1,10 +1,10 @@
 package components;
 
+import org.openqa.selenium.WebDriver;
+
 public class Element
 {
-	
-	
-	public Element(String xpath) {
+	public Element(String xpath, WebDriver driver) {
 		this.xpath = xpath;
 	}
 	
@@ -23,4 +23,5 @@ public class Element
 	
 	private String xpath;
 	private String text;
+	protected WebDriver driver;
 }

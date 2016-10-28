@@ -80,6 +80,9 @@ public abstract class Script extends Thread
 		return driver.findElement(By.xpath(e.getXpath()));
 	}
 	
+	public void getTable(String xpath) {
+		Table t = new Table(xpath, driver);
+	}
 	
 	public List<Element> find(String xpath) 
 	{
@@ -110,47 +113,6 @@ public abstract class Script extends Thread
 	/*
 	 * Access Methods
 	 */
-	
-	public String[][] read(Table t) 
-	{
-		// initialize
-		ArrayList<String[]> data = new ArrayList<String[]>();
-		
-		// build
-		WebElement table = find(t);
-		List<WebElement> rows = table.findElements(By.xpath(".//tr"));
-		for (int i = 0; i < rows.size(); i++) 
-		{	
-			ArrayList<String> rowData = new ArrayList<String>();
-			ArrayList<Element> row = new ArrayList<Element>();
-			// get physical row
-			WebElement r = rows.get(i);
-			// animating row scroll
-			String color = JavascriptManager.getProperty("style.backgroundColor", r, driver);
-			JavascriptManager.scrollTo(r, driver);
-			JavascriptManager.setColor(r, "yellow", driver);
-			// adding row of cells
-			String rowXPath = t.getXpath() + "//tr[" + (i + 1) + "]";
-			row.addAll(find(rowXPath + "//th" + "|" + rowXPath + "//td"));
-			if (row.size() == 0)
-			{
-				// empty row
-			}
-			else 
-			{
-				// read text from table cell
-				for (int j = 0; j < row.size(); j++) {
-					rowData.add(row.get(j).getText());
-				}
-				data.add(rowData.toArray(new String[0]));
-			}
-			// animation cleanup
-			JavascriptManager.setColor(r, color, driver);
-		}
-		
-		return data.toArray(new String[0][0]);
-		// return
-	}
 	
 	public String getAttr(String a, Element e) {
 		return find(e).getAttribute(a);
