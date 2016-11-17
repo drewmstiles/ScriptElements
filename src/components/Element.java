@@ -26,9 +26,14 @@ public class Element
 		return find().getText();
 	}
 	
-	private WebElement find() {
-		return driver.findElement(By.xpath(getXPath()));
+	public void click() {
+		find().click();
 	}
+	
+	private WebElement find() {
+		return (physical != null) ? physical : driver.findElement(By.xpath(getXPath()));
+	}
+	
 	
 	protected String xpath;
 	protected WebElement physical;

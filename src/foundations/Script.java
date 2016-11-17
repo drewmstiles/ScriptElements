@@ -79,6 +79,10 @@ public abstract class Script extends Thread
 		return driver.findElement(By.xpath(e.getXPath()));
 	}
 	
+	public Table getElement(String xpath) {
+		return (Table)ElementFactory.get("element", xpath, driver);
+	}
+	
 	public Table getTable(String xpath) {
 		return (Table)ElementFactory.get("table", xpath, driver);
 	}
