@@ -8,6 +8,7 @@ public class Element
 {
 	public Element(String xpath, WebDriver driver) {
 		this.xpath = xpath;
+		this.driver = driver;
 	}
 	
 	public Element(WebElement e, WebDriver driver) {
