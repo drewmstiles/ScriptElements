@@ -87,14 +87,14 @@ public abstract class Script extends Thread
 		return (Table)ElementFactory.get("table", xpath, driver);
 	}
 	
-	public List<Element> find(String xpath) 
+	public List<Element> getAll(String xpath) 
 	{
 		List<WebElement> webElements = driver.findElements(By.xpath(xpath));
 		int numElements = webElements.size(); 
 		Element[] elements = new Element[numElements];
 		for (int i = 0; i < numElements; i++) 
 		{
-			String uniqueXPath = xpath + "[" + (i + 1) + "]"; // xpath indexing starts at 1
+			String uniqueXPath = "(" + xpath + ")" + "[" + (i + 1) + "]"; // xpath indexing starts at 1
 			Element e = ElementFactory.get("element", uniqueXPath, driver);
 			WebElement we = webElements.get(i);
 			e.write(we.getText());

@@ -39,26 +39,26 @@ public class Table extends Element implements Iterable<Element[]>
 		ArrayList<Element[]> logRows = new ArrayList<Element[]>();
 		
 		WebElement physTable= driver.findElement(By.xpath(getXPath()));
-		List<WebElement> physRows = physTable.findElements(By.xpath(".//tr"));
 		
-		for (int i = 0; i < physRows.size(); i++) {	
+		int numRows = physTable.findElements(By.xpath(".//tr")).size();
+	
+		for (int i = 1; i < numRows; i++) { // XPath starts at one, ends at count minus one, do the math.	
 			
 			// Get physical row.
-			WebElement physRow = physRows.get(i);
+			String rowXPath = this.getXPath() + "//tr[" + (i) + "]";
+			WebElement physRow = driver.findElement(By.xpath(rowXPath));
 			
 			// Animating row scroll.
 			String color = JavascriptManager.getProperty("style.backgroundColor", physRow, driver);
 			JavascriptManager.scrollTo(physRow, driver);
 			JavascriptManager.setColor(physRow, "yellow", driver);
 			
-			// Adding row of cells.
-			String rowXPath = getXPath() + "//tr[" + (i + 1) + "]";
-			List<WebElement> physCells = driver.findElements(By.xpath(rowXPath + "//th" + "|" + rowXPath + "//td"));
+			List<WebElement> physCells = physRow.findElements(By.xpath(".//td"));
 			if (physCells.size() == 0) {
 				// empty row
 			}
 			else  {
-				logRows.add(parseElements(physCells));
+				logRows.add(parseElements(rowXPath, physCells));
 			}
 			
 			// animation cleanup
@@ -68,10 +68,10 @@ public class Table extends Element implements Iterable<Element[]>
 		return logRows.toArray(new Element[0][0]);
 	}
 	
-	private Element[] parseElements(List<WebElement> physCells) {
+	private Element[] parseElements(String rowXPath, List<WebElement> physCells) {
 		Element[] logCells = new Element[physCells.size()];
 		for (int j = 0; j < physCells.size(); j++) {
-			logCells[j] = ElementFactory.get("element", physCells.get(j), driver);
+			logCells[j] = ElementFactory.get("element", rowXPath + "//td[" + (j + 1) + "]", driver);
 		}
 		return logCells;
 	}
