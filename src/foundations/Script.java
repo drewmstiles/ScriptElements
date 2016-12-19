@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoAlertPresentException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -87,20 +88,26 @@ public abstract class Script extends Thread
 		return (Table)ElementFactory.get("table", xpath, driver);
 	}
 	
-	public List<Element> getAll(String xpath) 
-	{
-		List<WebElement> webElements = driver.findElements(By.xpath(xpath));
-		int numElements = webElements.size(); 
-		Element[] elements = new Element[numElements];
-		for (int i = 0; i < numElements; i++) 
-		{
-			String uniqueXPath = "(" + xpath + ")" + "[" + (i + 1) + "]"; // xpath indexing starts at 1
-			Element e = ElementFactory.get("element", uniqueXPath, driver);
-			WebElement we = webElements.get(i);
-			e.write(we.getText());
-			elements[i] = e;
+	public List<Element> getAll(String xpath) {
+		while (true) {
+			try {
+				List<WebElement> webElements = driver.findElements(By.xpath(xpath));
+				int numElements = webElements.size(); 
+				Element[] elements = new Element[numElements];
+				for (int i = 0; i < numElements; i++) 
+				{
+					String uniqueXPath = "(" + xpath + ")" + "[" + (i + 1) + "]"; // xpath indexing starts at 1
+					Element e = ElementFactory.get("element", uniqueXPath, driver);
+					WebElement we = webElements.get(i);
+					e.write(we.getText());
+					elements[i] = e;
+				}
+				return Arrays.asList(elements);
+			}
+			catch (StaleElementReferenceException ex) {
+				// try again
+			}
 		}
-		return Arrays.asList(elements);
 	}
 	
 	public int getElementCount(String xpath) {
