@@ -99,7 +99,7 @@ public abstract class Script extends Thread
 					String uniqueXPath = "(" + xpath + ")" + "[" + (i + 1) + "]"; // xpath indexing starts at 1
 					Element e = ElementFactory.get("element", uniqueXPath, driver);
 					WebElement we = webElements.get(i);
-					e.write(we.getText());
+					e.setText(we.getText());
 					elements[i] = e;
 				}
 				return Arrays.asList(elements);

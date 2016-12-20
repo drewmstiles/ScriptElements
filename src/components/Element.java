@@ -27,8 +27,16 @@ public class Element
 		find().sendKeys(text);
 	}
 	
+	public void setText(String text) {
+		this.text = text;
+	}
+	
 	public String getText() {
 		return find().getText();
+	}
+	
+	public String getHtml() {
+		return find().getAttribute("innerHTML");
 	}
 	
 	public Element hover() {
@@ -56,6 +64,7 @@ public class Element
 	
 	
 	protected String xpath;
+	protected String text;
 	protected WebElement physical;
 	protected WebDriver driver;
 }
