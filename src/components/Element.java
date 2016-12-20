@@ -1,8 +1,10 @@
 package components;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -29,11 +31,23 @@ public class Element
 		return find().getText();
 	}
 	
+	public Element hover() {
+		Actions builder = new Actions(driver);
+		builder.moveToElement(this.find());
+		return this;
+	}
+	
+	
 	public void click() {
 		WebElement physical = this.find();
 		physical.click(); 
-		WebDriverWait wait = new WebDriverWait(driver, 1000);
-		wait.until(ExpectedConditions.stalenessOf(physical));
+		try {
+			WebDriverWait wait = new WebDriverWait(driver, 1);
+			wait.until(ExpectedConditions.stalenessOf(physical));
+		}
+		catch (TimeoutException ex) {
+			// Element did not trigger DOM update.
+		}
 	}
 	
 	private WebElement find() {
