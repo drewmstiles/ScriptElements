@@ -126,6 +126,37 @@ public abstract class Script extends Thread
 	}
 
 	
+	public void waitForVisibilityOf(Element e) {
+		waitForVisibilityOf(e, 0.0);
+	}
+	
+	
+	public void waitForVisibilityOf(Element e, double targetOpacity) {
+		
+		int seconds = 60;
+		
+		WebDriverWait wait = new WebDriverWait(driver, seconds);
+		wait.until(ExpectedConditions.visibilityOf(find(e)));
+
+		if (targetOpacity == 0.0) {
+			return;
+		}
+		else {
+			int waited = 0;
+			while(waited < (seconds * 1000)) {
+				double opacity = Double.parseDouble(getStyle("opacity", e).replaceAll("px", ""));
+				if (opacity >= targetOpacity) {
+					return;
+				}
+				else {
+					wait(100);
+					waited += 100;
+				}
+			}
+		}
+	}
+
+	
 	/*
 	 * Access Methods
 	 */
