@@ -76,13 +76,19 @@ public abstract class Script extends Thread
 	 * Location Methods
 	 */
 	
+	public Element find(String xpath) {
+		return ElementFactory.get("element", xpath, driver);
+	}
+	
 	private WebElement find(Element e) {
 		return driver.findElement(By.xpath(e.getXPath()));
 	}
 	
+	
 	public Element getElement(String xpath) {
 		return ElementFactory.get("element", xpath, driver);
 	}
+	
 	
 	public Table getTable(String xpath) {
 		return (Table)ElementFactory.get("table", xpath, driver);
@@ -144,6 +150,10 @@ public abstract class Script extends Thread
 	/*
 	 * Interaction Methods
 	 */
+	
+	public void click(String s) {
+		click(ElementFactory.get("element", s, driver));
+	}
 	
 	public void click(Element e) 
 	{
