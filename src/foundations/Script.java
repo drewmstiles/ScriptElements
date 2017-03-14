@@ -94,7 +94,7 @@ public abstract class Script extends Thread
 		return (Table)ElementFactory.get("table", xpath, driver);
 	}
 	
-	public List<Element> getAll(String xpath) {
+	public Element[] findAll(String xpath) {
 		while (true) {
 			try {
 				List<WebElement> webElements = driver.findElements(By.xpath(xpath));
@@ -108,7 +108,7 @@ public abstract class Script extends Thread
 					e.setText(we.getText());
 					elements[i] = e;
 				}
-				return Arrays.asList(elements);
+				return elements;
 			}
 			catch (StaleElementReferenceException ex) {
 				// try again
