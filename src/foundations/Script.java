@@ -82,7 +82,13 @@ public abstract class Script extends Thread
 	}
 	
 	private WebElement find(Element e) {
-		return driver.findElement(By.xpath(e.getXPath()));
+		
+		By locator = By.xpath(e.getXPath());
+		
+		WebDriverWait wait = new WebDriverWait(driver, 1);
+		wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+		
+		return driver.findElement(locator);
 	}
 	
 	
@@ -120,8 +126,8 @@ public abstract class Script extends Thread
 	public int getElementCount(String xpath) {
 		return driver.findElements(By.xpath(xpath)).size();
 	}
-	
-	public void waitForAnimation(String style, Element e) {
+
+	public void waitForAnimationBegin(String style, Element e) {
 		
 		String previousStyle = getStyle(style, e);
 		
@@ -132,7 +138,26 @@ public abstract class Script extends Thread
 			msWaited += WAIT_MS_INC;
 			
 			String currentStyle = getStyle(style, e);
-			System.out.println(style + "\t" + currentStyle);
+			if (currentStyle.equals(previousStyle)) {
+				// keep waiting
+			}
+			else {
+				return;
+			}
+		}
+	}
+	
+	public void waitForAnimationEnd(String style, Element e) {
+		
+		String previousStyle = getStyle(style, e);
+		
+		int msWaited = 0;
+		while(msWaited < WAIT_MS) {
+			
+			wait(WAIT_MS_INC);
+			msWaited += WAIT_MS_INC;
+			
+			String currentStyle = getStyle(style, e);
 			if (currentStyle.equals(previousStyle)) {
 				return;
 			}
@@ -146,17 +171,12 @@ public abstract class Script extends Thread
 		WebDriverWait wait = new WebDriverWait(driver, 60);
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(e.getXPath())));
 	}
-
 	
 	public void waitForVisibilityOf(Element e) {
-		waitForVisibilityOf(e, 0.0);
-	}
-	
-	
-	public void waitForVisibilityOf(Element e, double targetOpacity) {
 		WebDriverWait wait = new WebDriverWait(driver, WAIT_MS / 1000);
 		wait.until(ExpectedConditions.visibilityOf(find(e)));
 	}
+	
 
 	
 	/*
