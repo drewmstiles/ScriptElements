@@ -1,6 +1,5 @@
 package foundations;
 
-import java.util.Arrays;
 import java.util.List;
 
 import managers.JavascriptManager;
@@ -25,6 +24,8 @@ public abstract class Script extends Thread
 {
 	public static final int ONE_SEC = 1000; // ms
 	public static final int ALERT_WAIT_DURATION = 250; // ms
+	public static final int WAIT_MS = 60 * 1000;
+	public static final int WAIT_MS_INC = 500;
 	
 	/*
 	 * Constructor
@@ -120,6 +121,27 @@ public abstract class Script extends Thread
 		return driver.findElements(By.xpath(xpath)).size();
 	}
 	
+	public void waitForAnimation(String style, Element e) {
+		
+		String previousStyle = getStyle(style, e);
+		
+		int msWaited = 0;
+		while(msWaited < WAIT_MS) {
+			
+			wait(WAIT_MS_INC);
+			msWaited += WAIT_MS_INC;
+			
+			String currentStyle = getStyle(style, e);
+			System.out.println(style + "\t" + currentStyle);
+			if (currentStyle.equals(previousStyle)) {
+				return;
+			}
+			else {
+				previousStyle = currentStyle;
+			}
+		}
+	}
+	
 	public void waitFor(Element e) {
 		WebDriverWait wait = new WebDriverWait(driver, 60);
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(e.getXPath())));
@@ -132,28 +154,8 @@ public abstract class Script extends Thread
 	
 	
 	public void waitForVisibilityOf(Element e, double targetOpacity) {
-		
-		int seconds = 60;
-		
-		WebDriverWait wait = new WebDriverWait(driver, seconds);
+		WebDriverWait wait = new WebDriverWait(driver, WAIT_MS / 1000);
 		wait.until(ExpectedConditions.visibilityOf(find(e)));
-
-		if (targetOpacity == 0.0) {
-			return;
-		}
-		else {
-			int waited = 0;
-			while(waited < (seconds * 1000)) {
-				double opacity = Double.parseDouble(getStyle("opacity", e).replaceAll("px", ""));
-				if (opacity >= targetOpacity) {
-					return;
-				}
-				else {
-					wait(100);
-					waited += 100;
-				}
-			}
-		}
 	}
 
 	
