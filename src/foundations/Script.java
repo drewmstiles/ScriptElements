@@ -11,6 +11,7 @@ import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -60,18 +61,6 @@ public abstract class Script extends Thread
 		driver.get(url);
 	}
 	
-	public void waitForPageToLoad() {
-		JavascriptManager.waitForPageToLoad(driver);
-	}
-	
-	public void wait(int ms) {
-		try {
-			Thread.sleep(ms);
-		} 
-		catch (InterruptedException ex) {
-			ex.printStackTrace();
-		}
-	}
 	
 	/*
 	 * Location Methods
@@ -127,6 +116,37 @@ public abstract class Script extends Thread
 		return driver.findElements(By.xpath(xpath)).size();
 	}
 
+	/*
+	 * Wait Methods
+	 */
+	
+	
+	public void wait(int ms) {
+		try {
+			Thread.sleep(ms);
+		} 
+		catch (InterruptedException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	public void waitForPageToLoad() {
+		JavascriptManager.waitForPageToLoad(driver);
+	}
+	
+	public void waitForVisibilityOf(Element e) {
+		waitFor(ExpectedConditions.visibilityOf(find(e)));
+	}
+	
+	public void waitForAttributeValue(String attr, String value, Element e) {
+		waitFor(ExpectedConditions.attributeContains(find(e), attr, value));
+	}
+	
+	private <T> void waitFor(ExpectedCondition<T> cond) {
+		WebDriverWait wait = new WebDriverWait(driver, 60);
+		wait.until(cond);
+	}
+	
 	public void waitForAnimationBegin(String style, Element e) {
 		
 		String previousStyle = getStyle(style, e);
@@ -167,17 +187,6 @@ public abstract class Script extends Thread
 		}
 	}
 	
-	public void waitFor(Element e) {
-		WebDriverWait wait = new WebDriverWait(driver, 60);
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(e.getXPath())));
-	}
-	
-	public void waitForVisibilityOf(Element e) {
-		WebDriverWait wait = new WebDriverWait(driver, WAIT_MS / 1000);
-		wait.until(ExpectedConditions.visibilityOf(find(e)));
-	}
-	
-
 	
 	/*
 	 * Access Methods
