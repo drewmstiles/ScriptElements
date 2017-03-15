@@ -161,7 +161,7 @@ public class JavascriptManager
 	
 	public static String getStyle(String style, WebElement element, WebDriver driver) {
 		JavascriptExecutor js = (JavascriptExecutor)driver;
-		String script = "return arguments[0].style." + style;
+		String script = "return window.getComputedStyle(arguments[0]).getPropertyValue('" + style + "')";
 		return (String)js.executeScript(script, element);
 	}
 	public static void hide(WebDriver driver, WebElement element) {
