@@ -45,7 +45,6 @@ public class Element
 		return this;
 	}
 	
-	
 	public void click() {
 		WebElement physical = this.find();
 		physical.click(); 
@@ -62,6 +61,10 @@ public class Element
 		return (physical != null) ? physical : driver.findElement(By.xpath(getXPath()));
 	}
 	
+	@Override
+	public String toString() {
+		return String.format("Element (%s)",xpath);
+	}
 	
 	protected String xpath;
 	protected String text;
