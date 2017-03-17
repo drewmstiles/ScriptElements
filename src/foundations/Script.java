@@ -8,6 +8,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoAlertPresentException;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -73,9 +74,14 @@ public abstract class Script extends Thread
 	private WebElement find(Element e) {
 		
 		By locator = By.xpath(e.getXPath());
-		
-		WebDriverWait wait = new WebDriverWait(driver, 1);
-		wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+
+		try {
+			WebDriverWait wait = new WebDriverWait(driver, 1);
+			wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+		}
+		catch (NoSuchElementException ex) {
+			return null;
+		}
 		
 		return driver.findElement(locator);
 	}
@@ -91,6 +97,13 @@ public abstract class Script extends Thread
 	}
 	
 	public Element[] findAll(String xpath) {
+		return findAllRelative(find("/html/body"), xpath);
+	}
+
+	public Element[] findAllRelative(Element root, String relXpath) {
+		
+		String xpath = root.getXPath() + relXpath; // TODO xpath or xPath?
+
 		while (true) {
 			try {
 				List<WebElement> webElements = driver.findElements(By.xpath(xpath));
@@ -217,12 +230,9 @@ public abstract class Script extends Thread
 		click(ElementFactory.get("element", s, driver));
 	}
 	
-	public void click(Element e) 
-	{
-		
+	public void click(Element e) {
 		WebElement physical = find(e);
-		try 
-		{
+		try {
 			physical.click();
 		}
 		catch (ElementNotVisibleException ex) 
