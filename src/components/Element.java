@@ -13,6 +13,7 @@ public class Element
 	public Element(String xpath, WebDriver driver) {
 		this.xpath = xpath;
 		this.driver = driver;
+		id = find().getAttribute("id");
 	}
 	
 	public Element(WebElement e, WebDriver driver) {
