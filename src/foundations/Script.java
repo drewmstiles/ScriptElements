@@ -24,6 +24,8 @@ import drivers.DriverFactory;
 
 public abstract class Script extends Thread
 {
+	public static final String PASS = "pass";
+	public static final String FAIL = "fail";
 	public static final int ONE_SEC = 1000; // ms
 	public static final int ALERT_WAIT_DURATION = 250; // ms
 	public static final int WAIT_MS = 60 * 1000;
@@ -286,6 +288,14 @@ public abstract class Script extends Thread
 	
 	public void setStyle(String style, String value, Element e) {
 		JavascriptManager.setStyle(style, value, find(e), driver);
+	}
+
+	/*
+	 * Enter Methods
+	 */
+	
+	public void begin() {
+		// Nothing yet.
 	}
 	
 	/*
