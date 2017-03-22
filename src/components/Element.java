@@ -38,6 +38,10 @@ public class Element
 	public String getHtml() {
 		return find().getAttribute("innerHTML");
 	}
+
+	public String getId() {
+		return id != null ? id : find().getAttribute("id");
+	}
 	
 	public Element hover() {
 		Actions builder = new Actions(driver);
@@ -58,14 +62,32 @@ public class Element
 	}
 	
 	private WebElement find() {
-		return (physical != null) ? physical : driver.findElement(By.xpath(getXPath()));
+		WebElement we = (physical != null) ? physical : driver.findElement(By.xpath(getXPath()));
+		id = we.getAttribute("id");
+		text = we.getText();
+		return we;
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("Element (%s)",xpath);
+		return String.format("Element (%s)", getId());
 	}
-	
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		else if (!(obj instanceof Element)) {
+			return false;
+		}
+		else {
+			Element other = (Element)obj;
+			return getId().equals(other.getId());
+		}
+	}
+
+	protected String id;
 	protected String xpath;
 	protected String text;
 	protected WebElement physical;
