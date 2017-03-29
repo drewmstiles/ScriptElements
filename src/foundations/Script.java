@@ -69,7 +69,17 @@ public abstract class Script extends Thread
 	 * Location Methods
 	 */
 	
-	public Element find(String xpath) {
+	public Element find(String locator) {
+
+		String xpath = "";
+
+		if (locator.charAt(0) == '/') {
+			xpath = locator;
+		}
+		else {
+			xpath = String.format("//*[@id='%s']", locator);
+		}
+		
 		return ElementFactory.get("element", xpath, driver);
 	}
 	
