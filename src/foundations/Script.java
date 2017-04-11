@@ -24,6 +24,7 @@ import drivers.DriverFactory;
 
 public abstract class Script extends Thread
 {
+	public static final String ID = "id";
 	public static final String PASS = "pass";
 	public static final String FAIL = "fail";
 	public static final int ONE_SEC = 1000; // ms
