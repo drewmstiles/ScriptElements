@@ -22,7 +22,7 @@ import components.DropDown;
 import components.Table;
 import drivers.DriverFactory;
 
-public abstract class Script extends Thread
+public abstract class Script implements Runnable
 {
 	public static final String ID = "id";
 	public static final String PASS = "pass";
@@ -38,7 +38,7 @@ public abstract class Script extends Thread
 	
 	public Script(String b)
 	{
-		driver = DriverFactory.getDriverForBrowswer(b);
+		browser = b;
 	}
 	
 	
@@ -306,7 +306,7 @@ public abstract class Script extends Thread
 	 */
 	
 	public void begin() {
-		// Nothing yet.
+		driver = DriverFactory.getDriverForBrowswer(browser);
 	}
 	
 	/*
@@ -322,4 +322,5 @@ public abstract class Script extends Thread
 	public abstract void run(); 
 	
 	private WebDriver driver;
+	private String browser;
 }
