@@ -226,9 +226,16 @@ public abstract class Script implements Runnable
 		return JavascriptManager.getStyle(s, find(e), driver);
 	}
 	
-	public void write(String text, Element e) 
-	{
+	public void write(String text, Element e) {
 		find(e).sendKeys(text);
+	}
+
+	public String read(Element e) {
+		return find(e).getText();
+	}
+
+	public String read(String xpath) {
+		return read(find(xpath));
 	}
 	
 	public void clear(Element e) {
