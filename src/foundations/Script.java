@@ -6,6 +6,7 @@ import managers.JavascriptManager;
 
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
@@ -29,7 +30,7 @@ public abstract class Script implements Runnable
 	public static final String FAIL = "fail";
 	public static final int ONE_SEC = 1000; // ms
 	public static final int ALERT_WAIT_DURATION = 250; // ms
-	public static final int WAIT_MS = 60 * 1000;
+	public static final int WAIT_MS = 5 * 1000;
 	public static final int WAIT_MS_INC = 500;
 	
 	/*
@@ -164,8 +165,13 @@ public abstract class Script implements Runnable
 		waitFor(ExpectedConditions.visibilityOf(find(e)));
 	}
 	
-	public void waitForAttributeValue(String attr, String value, Element e) {
-		waitFor(ExpectedConditions.attributeContains(find(e), attr, value));
+	public void waitForAttributeValue(String attr, String value, Element e) throws Exception {
+		try {
+			waitFor(ExpectedConditions.attributeContains(find(e), attr, value));
+		}
+		catch (TimeoutException ex) {
+			throw new Exception();
+		}
 	}
 	
 	private <T> void waitFor(ExpectedCondition<T> cond) {
