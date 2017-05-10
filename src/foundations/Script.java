@@ -6,7 +6,7 @@ import managers.JavascriptManager;
 
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
@@ -51,8 +51,7 @@ public abstract class Script implements Runnable
 	{
 		JavascriptManager.scrollTo(find(e), driver);
 	}
-	
-	
+
 	/*
 	 * Navigation Methods
 	 */
@@ -100,16 +99,6 @@ public abstract class Script implements Runnable
 		return driver.findElement(locator);
 	}
 	
-	
-	public Element getElement(String xpath) {
-		return ElementFactory.get("element", xpath, driver);
-	}
-	
-	
-	public Table getTable(String xpath) {
-		return (Table)ElementFactory.get("table", xpath, driver);
-	}
-	
 	public Element[] findAll(String xpath) {
 		return findAllRelative(find("/html/body"), xpath);
 	}
@@ -138,11 +127,20 @@ public abstract class Script implements Runnable
 			}
 		}
 	}
-	
-	public int getElementCount(String xpath) {
-		return driver.findElements(By.xpath(xpath)).size();
-	}
 
+
+	/*
+	 * XPath Methods
+	 */
+	
+	public String xpathForText(String text) {
+		return xpathForText(text, "*");
+	}
+	
+	public String xpathForText(String text, String tag) {
+		return String.format("//%s[contains(.,'%s')]", tag, text);
+	}
+	
 	/*
 	 * Wait Methods
 	 */

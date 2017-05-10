@@ -1,0 +1,8 @@
+#!/bin/bash
+
+version=`cat version.txt`
+filename="script-elements-${version}.jar"
+javac -sourcepath src -cp "lib/*" -d bin @sources.txt
+cd bin
+jar cvf $filename *
+mv $filename $1
