@@ -8,6 +8,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -259,7 +260,7 @@ public abstract class Script implements Runnable
 		try {
 			physical.click();
 		}
-		catch (ElementNotVisibleException ex) 
+		catch (WebDriverException ex) 
 		{
 			JavascriptManager.forceClick(physical, driver);
 		}
