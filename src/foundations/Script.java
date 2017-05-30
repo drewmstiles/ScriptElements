@@ -99,7 +99,7 @@ public abstract class Script implements Runnable
 		
 		return driver.findElement(locator);
 	}
-	
+
 	public Element[] findAll(String xpath) {
 		return findAllRelative(find("/html/body"), xpath);
 	}
@@ -159,7 +159,13 @@ public abstract class Script implements Runnable
 	public void waitForPageToLoad() {
 		JavascriptManager.waitForPageToLoad(driver);
 	}
-	
+
+
+	public void waitForPresenceOf(String xpath) {
+		waitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
+	}
+
+		
 	public void waitForVisibilityOf(Element e) {
 		waitFor(ExpectedConditions.visibilityOf(find(e)));
 	}
