@@ -3,6 +3,7 @@ package drivers;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class DriverFactory
 {
@@ -20,8 +21,10 @@ public class DriverFactory
 			return new ChromeDriver();
 		case "safari":
 			return new SafariDriver();
+		case "firefox":
+			return new FirefoxDriver();
 		default:
-			System.out.printf("Error: '%s' does not denote any known browser.\n");
+			System.out.printf("Error: '%s' is not a supported browser.\n");
 			return null;
 		}
 	}
