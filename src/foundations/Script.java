@@ -161,8 +161,9 @@ public abstract class Script implements Runnable
 	}
 
 
-	public void waitForPresenceOf(String xpath) {
+	public Element waitForPresenceOf(String xpath) {
 		waitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
+		return find(xpath);
 	}
 
 		
