@@ -12,6 +12,7 @@ my $SOURCES_DIR = './src';
 my $BINARIES_DIR = './bin';
 my $LIBRARIES_FILEPATH = './lib/*';
 my $JAR_PREFIX = 'script-elements-';
+my $RELEASE_PATH = '../release/';
 
 my $is_major = '';
 my $is_minor = '';
@@ -50,13 +51,14 @@ else {
 
 # Save version
 my $new_version = $major . '.' . $minor;
-printf "LOG: Writing \"%s\" to \"%s\"\n", $new_version, $VERSION_FILEPATH;
+printf "LOG: Writing %s to %s\n", $new_version, $VERSION_FILEPATH;
 `echo $new_version > $VERSION_FILEPATH`;
 
 # Build
-`javac -sourcepath $SOURCES_DIR \
-	-cp "$LIBRARIES_FILEPATH" \
-	-d $BINARIES_DIR \
+printf "LOG: Building sources defined in %s\n", $SOURCES_FILEPATH;
+`javac -sourcepath $SOURCES_DIR \\
+	-cp "$LIBRARIES_FILEPATH" \\
+	-d $BINARIES_DIR \\
 	\@$SOURCES_FILEPATH`; # Must quote lib path
 
 chdir($BINARIES_DIR);
@@ -64,6 +66,9 @@ chdir($BINARIES_DIR);
 # Archive
 my $jar_file = $JAR_PREFIX . $new_version . '.jar';
 `jar cvf $jar_file *`;
-rename($jar_file, "../release/$jar_file");
-
-printf("LOG: $jar_file released\n");
+if (rename($jar_file, $RELEASE_PATH . $jar_file)) {
+	printf("LOG: %s released\n", $jar_file);
+}
+else {
+	printf("ERROR: Failed to move %s to %s\n", $jar_file, $RELEASE_PATH);
+}
