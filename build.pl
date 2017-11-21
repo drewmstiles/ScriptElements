@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use Getopt::Long;
 use Pod::Usage;
-use IO::Handle;
 
 my $VERSION_FILEPATH = './version.txt';
 my $SOURCES_FILEPATH = './sources.txt';
@@ -35,7 +34,7 @@ if ($old_version =~ /(\d+)\.(\d+)/) {
 	$minor = $2;
 }
 else {
-	die "No version could be parse from %s\n", $VERSION_FILEPATH;
+	die "No version could be parsed from %s\n", $VERSION_FILEPATH;
 }
 
 # Increment version
