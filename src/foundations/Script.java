@@ -1,6 +1,7 @@
 package foundations;
 
 import java.util.List;
+import java.util.Set;
 
 import managers.JavascriptManager;
 
@@ -324,8 +325,13 @@ public abstract class Script implements Runnable
 	 * Enter Methods
 	 */
 	
-	public void begin() {
+	public void begin(Set<String> settings) {
+
 		driver = DriverFactory.getDriverForBrowswer(browser);
+
+		if (settings.contains("max")) {
+			driver.manage().window().maximize();		   
+		}
 	}
 	
 	/*
@@ -333,7 +339,7 @@ public abstract class Script implements Runnable
 	 */
 	
 	public void end() {
-		driver.close();
+		driver.quit();
 	}
 	
 	

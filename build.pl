@@ -50,16 +50,23 @@ else {
 
 # Save version
 my $new_version = $major . '.' . $minor;
-printf "LOG: Writing %s to %s\n", $new_version, $VERSION_FILEPATH;
-`echo $new_version > $VERSION_FILEPATH`;
 
 # Build
 printf "LOG: Building sources defined in %s\n", $SOURCES_FILEPATH;
 `javac -sourcepath $SOURCES_DIR \\
 	-cp "$LIBRARIES_FILEPATH" \\
 	-d $BINARIES_DIR \\
-	\@$SOURCES_FILEPATH`; # Must quote lib path
+	\@$SOURCES_FILEPATH`; # Must quote lib
 
+if ($? != 0) {
+	die "\nERROR: Compilation failed";
+}
+
+printf "LOG: Build succeeded, writing %s to %s \n", $new_version, $VERSION_FILEPATH;
+printf "LOG: Writing %s to %s\n", $new_version, $VERSION_FILEPATH;
+`echo $new_version > $VERSION_FILEPATH`;
+
+printf "Compilation exit code: $?\n";
 chdir($BINARIES_DIR);
 
 # Archive

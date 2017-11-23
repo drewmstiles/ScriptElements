@@ -7,6 +7,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.Wait;
 
 public class Element
 {
@@ -54,7 +55,7 @@ public class Element
 		WebElement physical = this.find();
 		physical.click(); 
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, 1);
+			Wait<WebDriver> wait = new WebDriverWait(driver, 1);
 			wait.until(ExpectedConditions.stalenessOf(physical));
 		}
 		catch (TimeoutException ex) {
