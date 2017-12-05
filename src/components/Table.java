@@ -20,11 +20,6 @@ public class Table extends Element implements Iterable<Element[]>
 		_rows = initializeRows();
 	}
 	
-	public Table (WebElement e, WebDriver driver) {
-		super(e, driver);
-		_rows = initializeRows();	
-	}
-	
 	public Element[] getRow(int r) {
 		return _rows[r];
 	}

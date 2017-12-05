@@ -2,6 +2,7 @@ package components;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -9,16 +10,13 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.Wait;
 
+import managers.JavascriptManager;
+
 public class Element
 {
 	public Element(String xpath, WebDriver driver) {
 		this.xpath = xpath;
 		this.driver = driver;
-		id = find().getAttribute("id");
-	}
-	
-	public Element(WebElement e, WebDriver driver) {
-		this.physical = e;
 	}
 	
 	public String getXPath() {
@@ -53,21 +51,20 @@ public class Element
 	
 	public void click() {
 		WebElement physical = this.find();
-		physical.click(); 
 		try {
-			Wait<WebDriver> wait = new WebDriverWait(driver, 1);
-			wait.until(ExpectedConditions.stalenessOf(physical));
+			physical.click();
 		}
-		catch (TimeoutException ex) {
-			// Element did not trigger DOM update.
+		catch (WebDriverException ex) 
+		{
+			JavascriptManager.forceClick(physical, driver);
 		}
 	}
-	
+
 	private WebElement find() {
-		WebElement we = (physical != null) ? physical : driver.findElement(By.xpath(getXPath()));
-		id = we.getAttribute("id");
-		text = we.getText();
-		return we;
+		WebElement physical = driver.findElement(By.xpath(getXPath()));
+		id = physical.getAttribute("id");
+		text = physical.getText();
+		return physical;
 	}
 	
 	@Override
@@ -92,6 +89,5 @@ public class Element
 	protected String id;
 	protected String xpath;
 	protected String text;
-	protected WebElement physical;
 	protected WebDriver driver;
 }

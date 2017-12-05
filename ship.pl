@@ -14,17 +14,18 @@ my $dest_dir = '';
 GetOptions("version=s", \$version,
 		   "dest=s", \$dest_dir);
 
-if (!($version && $dest_dir)) {
-	die "USAGE: $0 --version version --dest directory";
+if (!$dest_dir) {
+	die "USAGE: $0 --dest directory";
 }
-
 
 # ===========
 # === Run ===
 # ===========
 
 if ($version !~ /(\d+)\.(\d+)/) {
-	die "No version could be parsed from %s\n", $VERSION_FILEPATH;
+	$version = `cat $VERSION_FILEPATH`;
+	chomp $version;
+	printf "No version passed, using current %s\n", $version;
 }
 
 my $jar_file = 'script-elements-' . $version . '.jar';

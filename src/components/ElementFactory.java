@@ -10,7 +10,6 @@ public class ElementFactory {
 	public static final String TABLE = "table";
 	public static final String DROP_DOWN = "drop down";
 
-	
 	public static Element get(String element, String xpath, WebDriver driver) {
 		try {
 			if (element.equals(ELEMENT)) {
@@ -28,18 +27,6 @@ public class ElementFactory {
 		}
 		catch (NoSuchElementException ex) {
 			return null;
-		}
-	}
-	
-	public static Element get(String element, WebElement e, WebDriver driver) {
-		if (element.equals(ELEMENT)) {
-			return new Element(e, driver);
-		}
-		else if (element.equals(TABLE)) {
-			return new Table(e, driver);
-		}
-		else {
-			throw new RuntimeException("Attempted instantiation unkown element type.");
 		}
 	}
 }

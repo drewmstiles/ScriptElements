@@ -40,7 +40,7 @@ public class JavascriptManager
 	
 	public static void setStyle(String style, String value, WebElement element, WebDriver driver) {
 		JavascriptExecutor js = (JavascriptExecutor)driver;
-		js.executeScript("arguments[0].style.setProperty('" + style + "','" + value + "','important')", element);
+		js.executeScript("arguments[0].style.setProperty('" + style + "','" + value + "','important');", element);
 	}
 	
 	public static void scrollTo(WebElement element, WebDriver driver)

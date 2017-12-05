@@ -2,8 +2,8 @@ package foundations;
 
 import java.util.List;
 import java.util.Set;
-
-import managers.JavascriptManager;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.By;
@@ -24,6 +24,7 @@ import components.ElementFactory;
 import components.DropDown;
 import components.Table;
 import drivers.DriverFactory;
+import managers.JavascriptManager;
 
 public abstract class Script implements Runnable
 {
@@ -34,6 +35,7 @@ public abstract class Script implements Runnable
 	public static final int ALERT_WAIT_DURATION = 250; // ms
 	public static final int WAIT_MS = 5 * 1000;
 	public static final int WAIT_MS_INC = 500;
+	public static final int DEFAULT_WAIT = 10 * ONE_SEC;
 	
 	/*
 	 * Constructor
@@ -66,7 +68,10 @@ public abstract class Script implements Runnable
 	{
 		driver.get(url);
 	}
-	
+
+	public String getUrl() {
+		return driver.getCurrentUrl();
+	}
 	
 	/*
 	 * Location Methods
@@ -76,11 +81,13 @@ public abstract class Script implements Runnable
 
 		String xpath = "";
 
-		if (locator.charAt(0) == '/') {
-			xpath = locator;
+		Pattern p = Pattern.compile("\\w+");
+		Matcher m = p.matcher(locator);
+		if (m.matches()) {
+			xpath = String.format("//*[@id='%s']", locator);
 		}
 		else {
-			xpath = String.format("//*[@id='%s']", locator);
+			xpath = locator;
 		}
 		
 		return ElementFactory.get("element", xpath, driver);
@@ -91,8 +98,9 @@ public abstract class Script implements Runnable
 		By locator = By.xpath(e.getXPath());
 
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, 1);
-			wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+			WebDriverWait wait = new WebDriverWait(driver, 10);
+			System.out.printf("INFO - Script.find(Element): Waiting a max of %d seconds to find %s\n", 10, locator);
+			waitFor(ExpectedConditions.presenceOfElementLocated(locator));
 		}
 		catch (NoSuchElementException ex) {
 			return null;
@@ -102,6 +110,7 @@ public abstract class Script implements Runnable
 	}
 
 	public Element[] findAll(String xpath) {
+		System.out.printf("WARN: Prepending '/html/body' to xpath passed to findAll method '%s'\n", xpath);
 		return findAllRelative(find("/html/body"), xpath);
 	}
 
@@ -156,20 +165,38 @@ public abstract class Script implements Runnable
 			ex.printStackTrace();
 		}
 	}
+
+	private <T> void waitFor(ExpectedCondition<T> cond, int seconds) throws TimeoutException {
+		WebDriverWait wait = new WebDriverWait(driver, seconds);
+		wait.until(cond);
+	}
+
+	private <T> void waitFor(ExpectedCondition<T> cond) throws TimeoutException {
+		waitFor(cond, 60);
+	}
 	
 	public void waitForPageToLoad() {
 		JavascriptManager.waitForPageToLoad(driver);
 	}
 
-
-	public Element waitForPresenceOf(String xpath) {
-		waitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
-		return find(xpath);
+	public Element waitForPresenceOf(String xpath, int seconds) {
+		try {
+			waitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)), seconds);
+			return find(xpath);
+		}
+		catch (TimeoutException ex) {
+			return null;
+		}
 	}
 
+	public void waitForStalenessOf(Element e) {
+		waitFor(ExpectedConditions.stalenessOf(find(e)));
+	}
 		
-	public void waitForVisibilityOf(Element e) {
+	public Element waitForVisibilityOf(String xpath) {
+		Element e = waitForPresenceOf(xpath, DEFAULT_WAIT);
 		waitFor(ExpectedConditions.visibilityOf(find(e)));
+		return e;
 	}
 	
 	public void waitForAttributeValue(String attr, String value, Element e) throws Exception {
@@ -179,11 +206,6 @@ public abstract class Script implements Runnable
 		catch (TimeoutException ex) {
 			throw new Exception();
 		}
-	}
-	
-	private <T> void waitFor(ExpectedCondition<T> cond) {
-		WebDriverWait wait = new WebDriverWait(driver, 60);
-		wait.until(cond);
 	}
 	
 	public void waitForAnimationBegin(String style, Element e) {
@@ -273,11 +295,9 @@ public abstract class Script implements Runnable
 			JavascriptManager.forceClick(physical, driver);
 		}
 	}
-	
-	
-	public void select(String text, DropDown dd) 
-	{
-		Select s = new Select(find(dd));
+
+	public void select(String text, Element e) {
+		Select s = new Select(find(e));
 		s.selectByVisibleText(text);	
 	}
 	
