@@ -99,7 +99,6 @@ public abstract class Script implements Runnable
 
 		try {
 			WebDriverWait wait = new WebDriverWait(driver, 10);
-			System.out.printf("INFO - Script.find(Element): Waiting a max of %d seconds to find %s\n", 10, locator);
 			waitFor(ExpectedConditions.presenceOfElementLocated(locator));
 		}
 		catch (NoSuchElementException ex) {
@@ -110,7 +109,6 @@ public abstract class Script implements Runnable
 	}
 
 	public Element[] findAll(String xpath) {
-		System.out.printf("WARN: Prepending '/html/body' to xpath passed to findAll method '%s'\n", xpath);
 		return findAllRelative(find("/html/body"), xpath);
 	}
 
@@ -128,7 +126,7 @@ public abstract class Script implements Runnable
 					String uniqueXPath = "(" + xpath + ")" + "[" + (i + 1) + "]"; // xpath indexing starts at 1
 					Element e = ElementFactory.get("element", uniqueXPath, driver);
 					WebElement we = webElements.get(i);
-					e.setText(we.getText());
+					e.setText(we.getText()); // TODO should set in Element
 					elements[i] = e;
 				}
 				return elements;
@@ -157,7 +155,7 @@ public abstract class Script implements Runnable
 	 */
 	
 	
-	public void wait(int ms) {
+	public void wait(int ms) { // TODO should be seconds
 		try {
 			Thread.sleep(ms);
 		} 

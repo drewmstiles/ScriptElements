@@ -25,7 +25,7 @@ if (!$dest_dir) {
 if ($version !~ /(\d+)\.(\d+)/) {
 	$version = `cat $VERSION_FILEPATH`;
 	chomp $version;
-	printf "No version passed, using current %s\n", $version;
+	printf "LOG: No version passed, using current %s\n", $version;
 }
 
 my $jar_file = 'script-elements-' . $version . '.jar';

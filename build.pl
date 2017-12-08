@@ -19,11 +19,8 @@ my $is_minor = '';
 GetOptions("is-major", \$is_major,
 		   "is-minor", \$is_minor);
 
-if (!($is_major || $is_minor)) {
-	die "USAGE: $0 [--is-major | --is-minor]";
-}
-
 my $old_version = `cat $VERSION_FILEPATH`;
+chomp $old_version;
 
 my $major;
 my $minor;
@@ -38,15 +35,17 @@ else {
 }
 
 # Increment version
+my $increment = '';
 if ($is_major) {
+	$increment = 'major';
 	$major += 1;
 }
-elsif ($is_minor) {
+else {
+	$increment = 'minor';
 	$minor += 1;
 }
-else {
-	die "Version isn't changing, what're you doing here?";
-}
+
+printf "LOG: Incrementing to %s version after %s\n", $increment, $old_version;
 
 # Save version
 my $new_version = $major . '.' . $minor;

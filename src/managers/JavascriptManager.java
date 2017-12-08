@@ -43,59 +43,57 @@ public class JavascriptManager
 		js.executeScript("arguments[0].style.setProperty('" + style + "','" + value + "','important');", element);
 	}
 	
-	public static void scrollTo(WebElement element, WebDriver driver)
-	{
+	public static void scrollTo(WebElement element, WebDriver driver) {
 		smoothScroll(element, SCROLL_DELTA, driver);
 	}
 	
-	public static void smoothScroll(WebElement elem, int delta, WebDriver driver)
-	{
+	public static void smoothScroll(WebElement elem, int delta, WebDriver driver) {
+		
 		JavascriptExecutor js = (JavascriptExecutor)driver;
-		 
+
+		int windowY = getWindowY(js);
 		int windowHeight = getWindowHeight(js);
-		int elemHeight = getClientHeight(elem, js);
+		int elemY = getElementY(elem, js);
+		int elemHeight = getElementHeight(elem, js);
+
+		// Go backwards if window is passed element
+		delta = (windowY > elemY) ? (-1 * delta) : delta;
 		
-		int topHalf = (int)((0.5)*(windowHeight - elemHeight));
+		int halfScreen = (windowHeight / 2);
+		int distance = Math.abs(windowY - elemY);
+
+		// Add padding in accordance with direction
+		distance = (delta < 0 ) ? distance + halfScreen : distance - halfScreen;
 		
-		int prevRemainingDist = 0;
-		while (true)
-		{
+		while ((distance -= Math.abs(delta)) > 0) {
+			System.out.printf("Distance (%d)\n", distance);
 			scrollBy(0, delta, js);
-			
-			int remainingDist = getScrollTop(elem, js) - topHalf;
-			
-			if (remainingDist <= 0) break;
-			
-			if (remainingDist == prevRemainingDist) break;
-			
-			prevRemainingDist = remainingDist;
 		}
-		
-		try
-		{
-			Thread.sleep(60);
-		} catch (InterruptedException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		System.out.println();
 	}
 	
-	
-	private static void scrollBy(int dx, int dy, JavascriptExecutor js)
-	{
+	private static void scrollBy(int dx, int dy, JavascriptExecutor js)	{
 		js.executeScript("window.scrollBy(" + dx + "," + dy + ")");
 	}
 	
-	
-	private static int getClientHeight(WebElement elem, JavascriptExecutor js)
-	{
-		return ((Long)js.executeScript("return arguments[0].clientHeight;", elem)).intValue();
+	private static int getWindowHeight(JavascriptExecutor js) {
+		return ((Number)js.executeScript("return window.innerHeight;")).intValue();
 	}
-	
-	
-	private static int getScrollTop(WebElement elem, JavascriptExecutor js)
-	{
+
+	private static int getWindowY(JavascriptExecutor js) {
+		return ((Number)js.executeScript("return window.screenY;")).intValue();
+	}
+
+	private static int getElementHeight(WebElement elem, JavascriptExecutor js) {
+		return ((Number)js.executeScript("return arguments[0].getBoundingClientRect().height;", elem)).intValue();
+	}
+
+	private static int getElementY(WebElement elem, JavascriptExecutor js) {
+		return ((Number)js.executeScript("return arguments[0].getBoundingClientRect().y", elem)).intValue();
+	}
+
+	private static int getScrollTop(WebElement elem, JavascriptExecutor js)	{
+		
 		Object obj = js.executeScript("return arguments[0].getBoundingClientRect().top;", elem);
 		if (obj == null)
 		{
@@ -130,12 +128,6 @@ public class JavascriptManager
 		String script = "return window.getComputedStyle(arguments[0]).getPropertyValue('" + property + "')";
 		return (String)js.executeScript(script, element);
 	}
-	
-	private static int getWindowHeight(JavascriptExecutor js)
-	{
-		return ((Long)(js.executeScript("return window.innerHeight;"))).intValue();
-	}
-	
 	
 	public static void forceClick(WebElement dest, WebDriver driver) {
 		JavascriptExecutor js = (JavascriptExecutor)driver;
