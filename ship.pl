@@ -60,19 +60,23 @@ my $og_dir = getcwd();
 chdir $dest_dir or die "ERROR: Couldn't access $dest_dir - $!";
 my @prexisting_jars = glob($LIB_NAME . '-' . '*');
 if (@prexisting_jars > 0) {
-	my $prompt = sprintf("Found %d existing deployments of %s in %s, do you want to remove these? (Y/n): ", scalar @prexisting_jars, $LIB_NAME, $dest_dir);
+
+	printf "\nFound the following existing deployments of %s:\n", $LIB_NAME;
+	foreach my $file (@prexisting_jars) {
+		print $dest_dir . $file . "\n";
+	}
+	print "\n";
+	
+	my $prompt = "Do you want to remove these? (Y/n): ";
 	my $ui = get_yn($prompt);
 	if ( lc $ui eq 'y') {
 		foreach my $file (@prexisting_jars) {
 			unlink $file;
 		}
 	}
-	else {
-		# nada
-	}
 }
 
-chdir $og_dir;
+chdir $og_dir or die "ERROR: Couldn't access $og_dir - $!";
 			
 if (copy($source_path, $dest_dir)) {
 	printf "LOG: %s moved to %s\n", $jar_file, $dest_dir;
