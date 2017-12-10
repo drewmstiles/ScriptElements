@@ -177,6 +177,10 @@ public abstract class Script implements Runnable
 		JavascriptManager.waitForPageToLoad(driver);
 	}
 
+	public Element waitForPresenceOf(Element e, int seconds) {
+		return waitForPresenceOf(e.getXPath(), seconds);
+	}
+	
 	public Element waitForPresenceOf(String xpath, int seconds) {
 		try {
 			waitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)), seconds);
