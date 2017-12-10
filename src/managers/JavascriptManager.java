@@ -66,10 +66,8 @@ public class JavascriptManager
 		distance = (delta < 0 ) ? distance + halfScreen : distance - halfScreen;
 		
 		while ((distance -= Math.abs(delta)) > 0) {
-			System.out.printf("Distance (%d)\n", distance);
 			scrollBy(0, delta, js);
 		}
-		System.out.println();
 	}
 	
 	private static void scrollBy(int dx, int dy, JavascriptExecutor js)	{
