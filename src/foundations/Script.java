@@ -177,10 +177,6 @@ public abstract class Script implements Runnable
 		JavascriptManager.waitForPageToLoad(driver);
 	}
 
-	public Element waitForPresenceOf(Element e, int seconds) {
-		return waitForPresenceOf(e.getXPath(), seconds);
-	}
-	
 	public Element waitForPresenceOf(String xpath, int seconds) {
 		try {
 			waitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)), seconds);
@@ -194,8 +190,13 @@ public abstract class Script implements Runnable
 	public void waitForStalenessOf(Element e) {
 		waitFor(ExpectedConditions.stalenessOf(find(e)));
 	}
-		
-	public Element waitForVisibilityOf(String xpath) {
+
+	public Element waitForVisibilityOf(Element e, int seconds) {
+		return waitForVisibilityOf(e.getXPath(), seconds);
+	}
+	
+
+	public Element waitForVisibilityOf(String xpath, int seconds) {
 		Element e = waitForPresenceOf(xpath, DEFAULT_WAIT);
 		waitFor(ExpectedConditions.visibilityOf(find(e)));
 		return e;
