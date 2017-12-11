@@ -9,15 +9,17 @@ my $VERSION_FILEPATH = './version.txt';
 my $SOURCES_FILEPATH = './sources.txt';
 my $SOURCES_DIR = './src';
 my $BINARIES_DIR = './bin';
-my $LIBRARIES_FILEPATH = './lib/*';
+my $CLASSPATH = './lib/*';
 my $JAR_PREFIX = 'script-elements-';
 my $RELEASE_PATH = '../release/';
 
-my $is_major = '';
-my $is_minor = '';
+my $is_major;
+my $is_minor;
+my $cp = '';
 
 GetOptions("is-major", \$is_major,
-		   "is-minor", \$is_minor);
+		   "is-minor", \$is_minor,
+		   "cp=s", \$cp);
 
 my $old_version = `cat $VERSION_FILEPATH`;
 chomp $old_version;
@@ -51,9 +53,11 @@ printf "LOG: Incrementing to %s version after %s\n", $increment, $old_version;
 my $new_version = $major . '.' . $minor;
 
 # Build
+my $classpath = $cp ? $cp . ':' . $CLASSPATH : $CLASSPATH;
 printf "LOG: Building sources defined in %s\n", $SOURCES_FILEPATH;
+printf "LOG: Using CLASSPATH '%s'\n", $classpath;
 `javac -sourcepath $SOURCES_DIR \\
-	-cp "$LIBRARIES_FILEPATH" \\
+	-cp "$classpath" \\
 	-d $BINARIES_DIR \\
 	\@$SOURCES_FILEPATH`; # Must quote lib
 
