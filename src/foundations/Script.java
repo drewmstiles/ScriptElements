@@ -1,23 +1,25 @@
 package foundations;
 
+import java.util.Map;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.io.File;
 
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.Select;
 
 import components.Element;
 import components.ElementFactory;
@@ -25,6 +27,8 @@ import components.DropDown;
 import components.Table;
 import drivers.DriverFactory;
 import managers.JavascriptManager;
+
+import file.JsonUtils;
 
 public abstract class Script implements Runnable
 {
@@ -268,6 +272,10 @@ public abstract class Script implements Runnable
 		find(e).sendKeys(text);
 	}
 
+	public void writeJson(Map<String,Object> map, File f) {
+		JsonUtils.write(map, f);
+	}
+	
 	public String read(Element e) {
 		return find(e).getText();
 	}
