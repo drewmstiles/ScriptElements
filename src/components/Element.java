@@ -69,7 +69,7 @@ public class Element
 	
 	@Override
 	public String toString() {
-		return String.format("Element (%s)", getId());
+		return String.format("Element:\n\txpath: %s\n\ttext: %s\n", getXPath(), getText());
 	}
 
 	@Override
