@@ -202,8 +202,13 @@ public abstract class Script implements Runnable
 
 	public Element waitForVisibilityOf(String xpath, int seconds) {
 		Element e = waitForPresenceOf(xpath, DEFAULT_WAIT);
-		waitFor(ExpectedConditions.visibilityOf(find(e)));
-		return e;
+		try {
+			waitFor(ExpectedConditions.visibilityOf(find(e)), seconds);
+			return e;
+		}
+		catch (TimeoutException ex) {
+			return null;
+		}
 	}
 	
 	public void waitForAttributeValue(String attr, String value, Element e) throws Exception {
