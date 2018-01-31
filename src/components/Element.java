@@ -30,6 +30,10 @@ public class Element
 	public void setText(String text) {
 		this.text = text;
 	}
+
+	public String getTag() {
+		return find().getTagName();
+	}
 	
 	public String getText() {
 		return find().getText();
