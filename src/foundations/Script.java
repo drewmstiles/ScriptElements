@@ -55,9 +55,12 @@ public abstract class Script implements Runnable
 	 * Animation Methods
 	 */
 	
-	public void scrollTo(Element e) 
-	{
+	public void scrollTo(Element e) {
 		JavascriptManager.scrollTo(find(e), driver);
+	}
+
+	public void scrollDirectlyTo(Element e) {
+		JavascriptManager.directScroll(find(e), driver);
 	}
 
 	/*
@@ -81,7 +84,7 @@ public abstract class Script implements Runnable
 	 * Location Methods
 	 */
 	
-	public Element find(String locator) {
+	public Element create(String locator) {
 
 		String xpath = "";
 
