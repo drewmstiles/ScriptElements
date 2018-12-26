@@ -79,7 +79,30 @@ public abstract class Script implements Runnable
 	public String getUrl() {
 		return driver.getCurrentUrl();
 	}
+
+    public String getCurrentWindowHandle() {
+	return driver.getWindowHandle();
+    }
+    
+    public Set<String> getWindowHandles() {
+	return driver.getWindowHandles();
+    }
+
+    public void switchToWindow(String handle) {
+	driver.switchTo().window(handle);
+    }
 	
+    public void switchToFrame(Element frame) {
+	driver.switchTo().frame(find(frame));
+    }
+	
+	
+    public void switchToDefaultFrame() {
+	driver.switchTo().defaultContent();
+    }
+
+
+
 	/*
 	 * Location Methods
 	 */
@@ -116,7 +139,7 @@ public abstract class Script implements Runnable
 	}
 
 	public Element[] findAll(String xpath) {
-		return findAllRelative(find("/html/body"), xpath);
+		return findAllRelative(create("/html/body"), xpath);
 	}
 
 	public Element[] findAllRelative(Element root, String relXpath) {
@@ -156,7 +179,11 @@ public abstract class Script implements Runnable
 	public String xpathForText(String text, String tag) {
 		return String.format("//%s[contains(.,'%s')]", tag, text);
 	}
-	
+
+    	public String xpathForID(String id) {
+	    return String.format("//*[@id='%s']", id);
+	}
+
 	/*
 	 * Wait Methods
 	 */
@@ -187,7 +214,7 @@ public abstract class Script implements Runnable
 	public Element waitForPresenceOf(String xpath, int seconds) {
 		try {
 			waitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)), seconds);
-			return find(xpath);
+			return create(xpath);
 		}
 		catch (TimeoutException ex) {
 			return null;
@@ -289,7 +316,7 @@ public abstract class Script implements Runnable
 	}
 
 	public String read(String xpath) {
-		return read(find(xpath));
+		return read(create(xpath));
 	}
 	
 	public void clear(Element e) {
@@ -321,17 +348,6 @@ public abstract class Script implements Runnable
 	}
 	
 	
-	public void switchToFrame(Element frame) 
-	{
-		driver.switchTo().frame(find(frame));
-	}
-	
-	
-	public void switchToDefaultFrame()
-	{
-		driver.switchTo().defaultContent();
-	}
-
 	public boolean alertHandler() {
 		
 		return handleAlert(driver);

@@ -1,83 +1,156 @@
 #!/usr/bin/perl
 
+# === Modules ===
+
 use strict;
 use warnings;
 use Getopt::Long;
 use Pod::Usage;
+use Cwd;
+use My::Utils qw( validate_args script_basename );
 
-my $VERSION_FILEPATH = './version.txt';
-my $SOURCES_FILEPATH = './sources.txt';
+# === Constants ===
+
+my $VERSION_FILE = './version.txt';
+my $SOURCES_FILE = './sources.txt';
+my $CONFIG_FILE = './config.txt';
 my $SOURCES_DIR = './src';
 my $BINARIES_DIR = './bin';
 my $CLASSPATH = './lib/*';
-my $JAR_PREFIX = 'script-elements-';
-my $RELEASE_PATH = '../release/';
+my $RELEASE_DIR = './release';
+my $MAJOR_TYPE = 'major';
+my $MINOR_TYPE = 'minor';
+my $PATCH_TYPE = 'patch';
 
-my $is_major;
-my $is_minor;
-my $cp = '';
+# === Subroutines ===
 
-GetOptions("is-major", \$is_major,
-		   "is-minor", \$is_minor,
-		   "cp=s", \$cp);
+sub get_inc_type {
 
-my $old_version = `cat $VERSION_FILEPATH`;
-chomp $old_version;
+    validate_args(3, \@_);
+    my ($is_major, $is_minor, $is_patch) = @_;
 
-my $major;
-my $minor;
+    if ( $is_major ) {
+	return $MAJOR_TYPE;
+    }
+    elsif ( $is_minor ) {
+	return $MINOR_TYPE;
+    }
+    else {
+	return $PATCH_TYPE;
+    }
+}
 
-# Parse verioning
-if ($old_version =~ /(\d+)\.(\d+)/) {
+sub increment_version {
+
+    validate_args(1, \@_);
+    my ($inc_type) = @_;
+
+    my $major;
+    my $minor;
+    my $patch;
+
+    die "ERROR: Could not find version file at $VERSION_FILE"
+	unless -f $VERSION_FILE;
+
+    my $old_version = `cat $VERSION_FILE`;
+    chomp $old_version;
+    if ($old_version =~ /(\d+)\.(\d+)\.(\d+)/) {
 	$major = $1;
 	$minor = $2;
-}
-else {
-	die "No version could be parsed from %s\n", $VERSION_FILEPATH;
-}
+	$patch = $3;
+    }
+    else {
+	die "ERROR: No version could be parsed from $VERSION_FILE\n";
+    }
 
-# Increment version
-my $increment = '';
-if ($is_major) {
-	$increment = 'major';
+    if ( $inc_type eq $MAJOR_TYPE ) {
 	$major += 1;
-}
-else {
-	$increment = 'minor';
+    }
+    elsif ( $inc_type eq $MINOR_TYPE ) {
 	$minor += 1;
+    }
+    else {
+	$patch += 1;
+    }
+
+    my $new_version = $major . '.' . $minor . '.' . $patch;
+
+    printf "LOG: Incrementing %s to give version %s replacing %s\n",
+	$inc_type, $new_version, $old_version;
+
+    return $new_version;
 }
 
-printf "LOG: Incrementing to %s version after %s\n", $increment, $old_version;
+sub build {
 
-# Save version
-my $new_version = $major . '.' . $minor;
+    validate_args(1, \@_);    
+    my ($version) = @_;
 
-# Build
-my $classpath = $cp ? $cp . ':' . $CLASSPATH : $CLASSPATH;
-printf "LOG: Building sources defined in %s\n", $SOURCES_FILEPATH;
-printf "LOG: Using CLASSPATH '%s'\n", $classpath;
-`javac -sourcepath $SOURCES_DIR \\
-	-cp "$classpath" \\
-	-d $BINARIES_DIR \\
-	\@$SOURCES_FILEPATH`; # Must quote lib
+    printf "LOG: Using sourcepath '%s'\n", $SOURCES_FILE;
+    printf "LOG: Using classpath '%s'\n", $CLASSPATH;
 
-if ($? != 0) {
-	die "\nERROR: Compilation failed";
+    my @build_command = (
+	'javac',
+	'-sourcepath', $SOURCES_DIR,
+	'-cp', $CLASSPATH,
+	'-d', $BINARIES_DIR,
+	"\@$SOURCES_FILE"
+    );
+
+    die "ERROR: Compilation failed"
+	unless system(@build_command) == 0;
+
+    printf "LOG: Build succeeded, writing %s to %s\n", $version, $VERSION_FILE;
+    `echo $version > $VERSION_FILE`;
 }
 
-printf "LOG: Build succeeded, writing %s to %s \n", $new_version, $VERSION_FILEPATH;
-printf "LOG: Writing %s to %s\n", $new_version, $VERSION_FILEPATH;
-`echo $new_version > $VERSION_FILEPATH`;
+sub archive {
 
-printf "Compilation exit code: $?\n";
-chdir($BINARIES_DIR);
+    validate_args(2, \@_);
+    my ($lib, $version) = @_;
 
-# Archive
-my $jar_file = $JAR_PREFIX . $new_version . '.jar';
-`jar cvf $jar_file *`;
-if (rename($jar_file, $RELEASE_PATH . $jar_file)) {
-	printf("LOG: %s released\n", $jar_file);
+    my $jar_file = $lib . '-' . $version . '.jar';
+
+    my $prev_dir = getcwd();
+    
+    chdir($BINARIES_DIR) or die "ERROR: Failed to enter $BINARIES_DIR";
+
+    die "ERROR: Failed to create JAR"
+	unless system("jar cvf $jar_file * >/dev/null 2>&1") == 0;
+
+    chdir($prev_dir) or die "ERROR: Failed to return to $prev_dir";
+    
+    die "ERROR: Failed to ship JAR"
+	unless rename("${BINARIES_DIR}/${jar_file}", "${RELEASE_DIR}/${jar_file}");
 }
-else {
-	printf("ERROR: Failed to move %s to %s\n", $jar_file, $RELEASE_PATH);
+
+sub main {
+
+    my $is_major;
+    my $is_minor;
+
+    GetOptions("is-major!", \$is_major,
+	       "is-minor!", \$is_minor);
+
+    my $is_patch = !$is_major && !$is_minor;
+
+    die "ERROR: Could not find library config file at $CONFIG_FILE"
+	unless -f $CONFIG_FILE;
+
+    my $lib = `cat $CONFIG_FILE`;
+    chomp $lib;
+    
+    my $inc_type = get_inc_type($is_major, $is_minor, $is_patch);
+    my $version = increment_version($inc_type);
+    
+    build($version);
+
+    archive($lib, $version);
+
+    print "END: $lib-$version released\n";
 }
+
+
+# === Run ===
+
+&main();
