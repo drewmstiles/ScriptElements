@@ -1,0 +1,4 @@
+lib/*
+/usr/local/share/java/selenium-3.141.59/*
+/usr/local/share/java/selenium-3.141.59/libs/*
+/usr/local/share/java/java-utils-1.0.14/*
